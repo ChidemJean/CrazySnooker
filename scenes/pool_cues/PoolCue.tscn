@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://models/pool_cues/pool_cue.glb" type="PackedScene" id=1]
+[ext_resource path="res://src/Game/Controllers/PoolCueController.cs" type="Script" id=2]
+
+[sub_resource type="CylinderShape" id=1]
+height = 0.744938
+radius = 0.0576774
+
+[node name="PoolCue" type="Spatial"]
+script = ExtResource( 2 )
+areaDetectorPath = NodePath("PoolCue")
+
+[node name="PoolCue" type="Area" parent="."]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0 )
+collision_layer = 4
+collision_mask = 8
+
+[node name="pool_cue" parent="PoolCue" instance=ExtResource( 1 )]
+transform = Transform( 0.035, 0, 0, 0, 0.035, 0, 0, 0, 0.035, -1.94689, 0, 0 )
+
+[node name="CollisionShape" type="CollisionShape" parent="PoolCue"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.349619, 0, -1.40697e-08 )
+shape = SubResource( 1 )

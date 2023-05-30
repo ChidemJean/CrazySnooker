@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://src/Game/Entities/Balls/GenericBall.cs" type="Script" id=1]
+
+[sub_resource type="PhysicsMaterial" id=4]
+friction = 0.5
+bounce = 0.65
+
+[sub_resource type="SpatialMaterial" id=7]
+
+[sub_resource type="SphereMesh" id=6]
+radius = 0.105
+height = 0.21
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereShape" id=3]
+radius = 0.103326
+
+[node name="Ball" type="RigidBody"]
+collision_layer = 16
+collision_mask = 26
+mass = 15.0
+physics_material_override = SubResource( 4 )
+script = ExtResource( 1 )
+meshPath = NodePath("MeshInstance")
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+material_override = SubResource( 7 )
+mesh = SubResource( 6 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 3 )
