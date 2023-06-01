@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using CrazySnooker.Game.Entities.Balls;
+using CrazySnooker.Extensions;
 
 namespace CrazySnooker.Game.Controllers
 {
@@ -16,6 +17,15 @@ namespace CrazySnooker.Game.Controllers
       [Export]
       private float maxForce = 140f;
 
+      [Export(PropertyHint.Layers3dPhysics)]
+      private uint projectionMask;
+
+      [Export]
+      private float ballRadius = 0.105f;
+
+      [Export]
+      private float sizeNextLineProjection = .45f;
+
       private GenericBall whiteBall;
 
       private float rotationFactor = 2f;
@@ -29,11 +39,35 @@ namespace CrazySnooker.Game.Controllers
 
       private bool canShot = false;
 
+      private Spatial projection;
+      private Spatial projectionNext;
+      private MeshInstance projectionMesh;
+      private MeshInstance projectionNextMesh;
+      private MeshInstance projectionBall;
+
+      private MeshInstance debugBallTop;
+      private MeshInstance debugBallBottom;
+      private MeshInstance debugBallRight;
+      private MeshInstance debugBallLeft;
+      private MeshInstance debugBallMiddle;
+
       public override void _Ready()
       {
          whiteBall = GetNode<GenericBall>("%WhiteBall");
          areaDetector = GetNode<Area>(areaDetectorPath);
          areaDetector.Connect("body_entered", this, nameof(OnWhiteBallCollide));
+
+         projection = GetNode<Spatial>("%Projection");
+         projectionMesh = projection.GetNode<MeshInstance>("Mesh");
+         projectionNext = GetNode<Spatial>("%ProjectionNext");
+         projectionNextMesh = projectionNext.GetNode<MeshInstance>("Mesh");
+         projectionBall = GetNode<MeshInstance>("%WhiteBallProjection");
+
+         debugBallTop = GetNode<MeshInstance>("%MiniBallProjectionDebugTop");
+         debugBallBottom = GetNode<MeshInstance>("%MiniBallProjectionDebugBottom");
+         debugBallRight = GetNode<MeshInstance>("%MiniBallProjectionDebugRight");
+         debugBallLeft = GetNode<MeshInstance>("%MiniBallProjectionDebugLeft");
+         debugBallMiddle = GetNode<MeshInstance>("%MiniBallProjectionDebugMiddle");
       }
 
       public void OnWhiteBallCollide(Node bodyEntered)
@@ -51,10 +85,19 @@ namespace CrazySnooker.Game.Controllers
          if (whiteBall.LinearVelocity.Length() == 0)
          {
             areaDetector.Visible = true;
+            UpdateProjection();
          }
          else
          {
             areaDetector.Visible = false;
+            projectionBall.Visible = false;
+            projection.Visible = false;
+            projectionNext.Visible = false;
+            debugBallTop.Visible = false;
+            debugBallBottom.Visible = false;
+            debugBallRight.Visible = false;
+            debugBallLeft.Visible = false;
+            debugBallMiddle.Visible = false;
          }
       }
 
@@ -113,6 +156,182 @@ namespace CrazySnooker.Game.Controllers
          {
             areaDetector.Translation = moveValue;
          }
+      }
+
+      public void UpdateProjection()
+      {
+         // if (!canShot) return;
+
+         Vector3 forward = GlobalTransform.basis.z.Normalized();
+         Vector3 whiteBallPos = whiteBall.GlobalTransform.origin;
+         projection.Visible = true;
+         PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
+
+         Vector3 forwardRay = (forward * 1000);
+
+         Vector3 fromTop = whiteBallPos + new Vector3(-ballRadius / 2, 0, 0);
+         Vector3 toTop = forwardRay + new Vector3(0, ballRadius, 0);
+         var resultTop = spaceState.IntersectRay(fromTop, toTop, null, projectionMask);
+         var posTop = CheckProjectionUnit(resultTop, debugBallTop, fromTop);
+
+         Vector3 fromBottom = whiteBallPos + new Vector3(ballRadius / 2, 0, 0);
+         Vector3 toBottom = forwardRay + new Vector3(0, -ballRadius, 0);
+         var resultBottom = spaceState.IntersectRay(fromBottom, toBottom, null, projectionMask);
+         var posBottom = CheckProjectionUnit(resultBottom, debugBallBottom, fromBottom);
+
+         Vector3 fromRight = whiteBallPos + new Vector3(-ballRadius, 0, 0);
+         Vector3 toRight = forwardRay + new Vector3(-ballRadius, 0, 0);
+         var resultRight = spaceState.IntersectRay(fromRight, toRight, null, projectionMask);
+         var posRight = CheckProjectionUnit(resultRight, debugBallRight, fromRight);
+
+         Vector3 fromLeft = whiteBallPos + new Vector3(ballRadius, 0, 0);
+         Vector3 toLeft = forwardRay + new Vector3(ballRadius, 0, 0);
+         var resultLeft = spaceState.IntersectRay(fromLeft, toLeft, null, projectionMask);
+         var posLeft = CheckProjectionUnit(resultLeft, debugBallLeft, fromLeft);
+
+         Vector3 fromMiddle = whiteBallPos;
+         Vector3 toMiddle = forwardRay;
+         var resultMiddle = spaceState.IntersectRay(fromMiddle, toMiddle, null, projectionMask);
+         var posMiddle = CheckProjectionUnit(resultMiddle, debugBallMiddle, fromMiddle);
+
+         float minDist = Mathf.Inf;
+         Vector3 minPosCollided = Vector3.Zero;
+         Vector3 minNormal = Vector3.Zero;
+         Vector3 objCenter = Vector3.Zero;
+
+         if (posTop != null)
+         {
+            var posT = (Vector3)posTop[0];
+            float distT = posT.DistanceTo(whiteBallPos);
+            if (minDist > distT)
+            {
+               minPosCollided = posT;
+               minDist = distT;
+               minNormal = posTop[1];
+               objCenter = posTop[2];
+            }
+         }
+         if (posBottom != null)
+         {
+            var posB = (Vector3)posBottom[0];
+            float distB = posB.DistanceTo(whiteBallPos);
+            if (minDist > distB)
+            {
+               minPosCollided = posB;
+               minDist = distB;
+               minNormal = posBottom[1];
+               objCenter = posBottom[2];
+            }
+         }
+         if (posRight != null)
+         {
+            var posR = (Vector3)posRight[0];
+            float distR = posR.DistanceTo(whiteBallPos);
+            if (minDist > distR)
+            {
+               minPosCollided = posR;
+               minDist = distR;
+               minNormal = posRight[1];
+               objCenter = posRight[2];
+            }
+         }
+         if (posLeft != null)
+         {
+            var posL = (Vector3)posLeft[0];
+            float distL = posL.DistanceTo(whiteBallPos);
+            if (minDist > distL)
+            {
+               minPosCollided = posL;
+               minDist = distL;
+               minNormal = posLeft[1];
+               objCenter = posLeft[2];
+            }
+         }
+         if (posMiddle != null)
+         {
+            var posM = (Vector3)posMiddle[0];
+            float distM = posM.DistanceTo(whiteBallPos);
+            if (minDist > distM)
+            {
+               minPosCollided = posM;
+               minDist = distM;
+               minNormal = posMiddle[1];
+               objCenter = posMiddle[2];
+            }
+         }
+
+         Vector3 posCollidedProj = minPosCollided + minNormal * ballRadius;
+         Vector3 projectionFinalPos = whiteBallPos + (forward * posCollidedProj.DistanceTo(whiteBallPos));
+
+         // PROJECTION BALL
+         projectionBall.GlobalTranslation = projectionFinalPos;
+         projectionBall.Visible = true;
+
+         // PROJECTION LINE
+         var heightLine = whiteBallPos.DistanceTo(projectionFinalPos);
+         (projectionMesh.Mesh as CylinderMesh).Height = heightLine - ballRadius * 2;
+
+         projection.GlobalTranslation = whiteBallPos;
+         Transform projectionTrans = projection.GlobalTransform;
+         Basis lookAtBasis = projectionTrans.LookAtBasis(projectionFinalPos);
+         projectionTrans.basis = lookAtBasis;
+         projection.GlobalTransform = projectionTrans;
+
+         Vector3 meshTranslation = projectionMesh.Translation;
+         meshTranslation.z = heightLine / 2;
+         projectionMesh.Translation = meshTranslation;
+
+         // COLLIDED WITH ANY
+         if (minDist != Mathf.Inf)
+         {
+            projectionNext.Visible = true;
+            // PROJECTION NEXT LINE
+            if (objCenter != Vector3.Zero)
+            {
+               // IS A BALL
+               projectionNext.GlobalTranslation = objCenter;
+               Transform projectionNextTrans = projectionNext.GlobalTransform;
+               Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(objCenter + objCenter.DirectionTo(projectionFinalPos) * -1 * 5);
+               projectionNextTrans.basis = lookAtBasisNext;
+               projectionNext.GlobalTransform = projectionNextTrans;
+
+            }
+            else
+            {
+               // IS TABLE
+               projectionNext.GlobalTranslation = projectionFinalPos;
+               Transform projectionNextTrans = projectionNext.GlobalTransform;
+               float angle = (projectionFinalPos - whiteBallPos).SignedAngleTo(minNormal, Vector3.Up);
+               Vector3 flippedVec = minNormal.Rotated(Vector3.Up, angle * -1);
+               Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(projectionFinalPos + minNormal * 10);
+               projectionNextTrans.basis = lookAtBasisNext;
+               projectionNext.GlobalTransform = projectionNextTrans;
+            }
+
+            (projectionNextMesh.Mesh as CylinderMesh).Height = sizeNextLineProjection;
+            Vector3 nextMeshTranslation = projectionNextMesh.Translation;
+            nextMeshTranslation.z = sizeNextLineProjection / 2;
+            projectionNextMesh.Translation = nextMeshTranslation;
+         }
+      }
+
+      public Vector3[] CheckProjectionUnit(Godot.Collections.Dictionary result, Spatial miniBall, Vector3 from)
+      {
+         bool hasCollision = result != null && result.Contains("collider");
+         miniBall.Visible = hasCollision;
+         if (hasCollision)
+         {
+            Spatial collider = (Spatial)result["collider"];
+            Vector3 objCenter = collider.GlobalTransform.origin;
+            Vector3 position = (Vector3)result["position"];
+            Vector3 normal = (Vector3)result["normal"];
+            if (collider is GenericBall && !(collider is WhiteBall))
+            {
+               miniBall.GlobalTranslation = position;
+            }
+            return new Vector3[] { position, normal, objCenter };
+         }
+         return null;
       }
 
       public void Shot()

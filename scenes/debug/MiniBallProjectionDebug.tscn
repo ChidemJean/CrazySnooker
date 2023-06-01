@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=2]
+
+[sub_resource type="SpatialMaterial" id=9]
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+
+[sub_resource type="SphereMesh" id=8]
+material = SubResource( 9 )
+radius = 0.01
+height = 0.02
+radial_segments = 12
+rings = 4
+
+[node name="MiniBallProjectionDebug" type="MeshInstance"]
+mesh = SubResource( 8 )

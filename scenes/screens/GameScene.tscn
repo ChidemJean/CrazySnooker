@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/tables/Table.tscn" type="PackedScene" id=2]
@@ -7,6 +7,32 @@
 [ext_resource path="res://scenes/pool_cues/PoolCue.tscn" type="PackedScene" id=5]
 [ext_resource path="res://src/Game/Managers/GameManager.cs" type="Script" id=6]
 [ext_resource path="res://scenes/balls/WhiteBall.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/pool_cues/Projection.tscn" type="PackedScene" id=8]
+[ext_resource path="res://scenes/debug/MiniBallProjectionDebug.tscn" type="PackedScene" id=9]
+
+[sub_resource type="CylinderMesh" id=8]
+top_radius = 0.01
+bottom_radius = 0.01
+height = 0.05
+radial_segments = 6
+
+[sub_resource type="CylinderMesh" id=9]
+top_radius = 0.01
+bottom_radius = 0.01
+height = 0.05
+radial_segments = 6
+
+[sub_resource type="SphereMesh" id=6]
+radius = 0.105
+height = 0.21
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SpatialMaterial" id=7]
+flags_transparent = true
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+albedo_color = Color( 1, 1, 1, 0.592157 )
 
 [node name="GameScene" type="Spatial"]
 
@@ -18,9 +44,11 @@ script = ExtResource( 6 )
 transform = Transform( 1, 0, 0, 0, 0.377485, 0.926015, 0, -0.926015, 0.377486, -8.12392, 5.84071, 0 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.828832, 0.559497, 0, -0.559497, 0.828832, 0, 5.74205, 7.71479 )
+transform = Transform( -4.37114e-08, -1, -4.37114e-08, 0, -4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 0, 17.9257, 0 )
 environment = ExtResource( 1 )
+projection = 1
 fov = 50.0
+size = 6.0
 
 [node name="Table" parent="." instance=ExtResource( 2 )]
 
@@ -29,7 +57,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.223413 )
 script = ExtResource( 3 )
 spawnPoints = [ NodePath("Position3D"), NodePath("Position3D2"), NodePath("Position3D3"), NodePath("Position3D4") ]
 colors = PoolColorArray( 1, 0.329412, 0.976471, 1, 1, 0.25098, 0.25098, 1, 0.309804, 0.317647, 1, 1, 0.0627451, 0.0627451, 0.0627451, 1, 0.952941, 1, 0.380392, 1, 0.380392, 1, 0.882353, 1, 1, 0.788235, 0.223529, 1, 0.243137, 0.65098, 0.498039, 1 )
-qtdBalls = 40
+qtdBalls = 5
 ballScene = ExtResource( 4 )
 
 [node name="Position3D" type="Position3D" parent="Spawn"]
@@ -45,13 +73,58 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.832462, 2.23913, -1.19665 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.960365, 2.23913, 1.18926 )
 
 [node name="PoolCue" parent="." instance=ExtResource( 5 )]
-transform = Transform( 0.999695, 0.0247114, 0, -0.0246608, 0.997648, -0.0639575, -0.00158048, 0.063938, 0.997953, 0, 2.54372, 0 )
+transform = Transform( 0.999695, 0.0247113, 0, -0.0247114, 0.999695, 0, 0, 0, 1, 0, 2.54372, 0 )
+maxForce = 165.0
+projectionMask = 18
+ballRadius = 0.106
+sizeNextLineProjection = 1.0
 
 [node name="PoolCue" parent="PoolCue" index="0"]
-transform = Transform( -4.36557e-08, 1.49885e-09, -1, 0, 1, 1.3315e-09, 1, -7.45058e-09, -4.4005e-08, 0, 0, 0 )
+transform = Transform( -4.37722e-08, -1.86265e-09, -1, -0.0933785, 0.99563, 3.72529e-09, 0.995631, 0.0933785, -4.37114e-08, 0, 0, 0 )
 
 [node name="WhiteBall" parent="." instance=ExtResource( 7 )]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.31539, 0.486019 )
 
+[node name="Projection" parent="." instance=ExtResource( 8 )]
+unique_name_in_owner = true
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.43239, -0.0478512 )
+
+[node name="Mesh" parent="Projection" index="0"]
+mesh = SubResource( 8 )
+
+[node name="ProjectionNext" parent="." instance=ExtResource( 8 )]
+unique_name_in_owner = true
+
+[node name="Mesh" parent="ProjectionNext" index="0"]
+mesh = SubResource( 9 )
+
+[node name="WhiteBallProjection" type="MeshInstance" parent="."]
+unique_name_in_owner = true
+visible = false
+mesh = SubResource( 6 )
+material/0 = SubResource( 7 )
+
+[node name="MiniBallProjectionDebugTop" parent="." instance=ExtResource( 9 )]
+unique_name_in_owner = true
+visible = false
+
+[node name="MiniBallProjectionDebugBottom" parent="." instance=ExtResource( 9 )]
+unique_name_in_owner = true
+visible = false
+
+[node name="MiniBallProjectionDebugLeft" parent="." instance=ExtResource( 9 )]
+unique_name_in_owner = true
+visible = false
+
+[node name="MiniBallProjectionDebugRight" parent="." instance=ExtResource( 9 )]
+unique_name_in_owner = true
+visible = false
+
+[node name="MiniBallProjectionDebugMiddle" parent="." instance=ExtResource( 9 )]
+unique_name_in_owner = true
+visible = false
+
 [editable path="PoolCue"]
+[editable path="Projection"]
+[editable path="ProjectionNext"]
