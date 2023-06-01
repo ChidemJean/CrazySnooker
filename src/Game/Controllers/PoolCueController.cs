@@ -301,9 +301,11 @@ namespace CrazySnooker.Game.Controllers
                // IS TABLE
                projectionNext.GlobalTranslation = projectionFinalPos;
                Transform projectionNextTrans = projectionNext.GlobalTransform;
-               float angle = (projectionFinalPos - whiteBallPos).SignedAngleTo(minNormal, Vector3.Up);
-               Vector3 flippedVec = minNormal.Rotated(Vector3.Up, angle * -1);
-               Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(projectionFinalPos + minNormal * 10);
+               Vector3 normal = projectionFinalPos + minNormal * 10;
+               float angle = projectionFinalPos.DirectionTo(whiteBallPos).SignedAngleTo(normal, Vector3.Up);
+               GD.Print(Mathf.Rad2Deg(angle));
+               Vector3 flippedVec = normal.Rotated(Vector3.Up, angle * .5f);
+               Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(flippedVec * 10);
                projectionNextTrans.basis = lookAtBasisNext;
                projectionNext.GlobalTransform = projectionNextTrans;
             }
