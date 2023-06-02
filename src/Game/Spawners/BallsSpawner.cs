@@ -41,8 +41,8 @@ namespace CrazySnooker.Game.Spawners
                 AddChild(ballNode);
                 var position = positions[MathUtils.RandiRange(0, positions.Count - 1)];
                 ballNode.GlobalTranslation = position.GlobalTransform.origin;
-                int rndIndexColor = MathUtils.RandiRange(0, colors.Length - 1);
-                ballNode.ChangeColor(colors[rndIndexColor]);
+                // int rndIndexColor = MathUtils.RandiRange(0, colors.Length - 1);
+                // ballNode.ChangeColor(colors[rndIndexColor]);
             }
         }
 

@@ -5,6 +5,8 @@
 [resource]
 background_mode = 1
 background_sky = SubResource( 1 )
-background_color = Color( 0.988235, 1, 0.564706, 1 )
-ambient_light_color = Color( 0.835294, 0.835294, 0.835294, 1 )
+background_color = Color( 0.0862745, 0.0156863, 0.137255, 1 )
+ambient_light_color = Color( 1, 1, 1, 1 )
 ambient_light_energy = 0.4
+tonemap_mode = 2
+dof_blur_far_distance = 8.89
