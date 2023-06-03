@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://src/Game/Entities/Balls/WhiteBall.cs" type="Script" id=1]
 
@@ -16,12 +16,16 @@ rings = 8
 [sub_resource type="SphereShape" id=3]
 radius = 0.103326
 
+[sub_resource type="SphereShape" id=9]
+radius = 0.138757
+
 [node name="WhiteBall" type="RigidBody"]
 collision_layer = 8
-collision_mask = 26
+collision_mask = 18
 mass = 15.0
 physics_material_override = SubResource( 8 )
 script = ExtResource( 1 )
+predictAreaPath = NodePath("Area")
 
 [node name="MeshInstance" type="MeshInstance" parent="."]
 material_override = SubResource( 7 )
@@ -29,3 +33,10 @@ mesh = SubResource( 6 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 shape = SubResource( 3 )
+
+[node name="Area" type="Area" parent="."]
+collision_layer = 64
+collision_mask = 16
+
+[node name="CollisionShape" type="CollisionShape" parent="Area"]
+shape = SubResource( 9 )

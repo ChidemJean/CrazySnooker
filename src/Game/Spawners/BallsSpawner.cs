@@ -28,7 +28,7 @@ namespace CrazySnooker.Game.Spawners
             {
                 positions.Add(GetNode<Position3D>(pointPath));
             }
-            Spawn();
+            // Spawn();
         }
 
         public void Spawn()

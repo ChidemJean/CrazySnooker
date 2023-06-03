@@ -2,6 +2,7 @@ using Godot;
 using System;
 using CrazySnooker.Game.Entities.Balls;
 using CrazySnooker.Extensions;
+using CrazySnooker.Game.Managers;
 
 namespace CrazySnooker.Game.Controllers
 {
@@ -43,6 +44,7 @@ namespace CrazySnooker.Game.Controllers
       private Spatial projectionNext;
       private MeshInstance projectionMesh;
       private MeshInstance projectionNextMesh;
+      private Spatial projectionArrowNext;
       private MeshInstance projectionBall;
 
       private MeshInstance debugBallTop;
@@ -50,9 +52,11 @@ namespace CrazySnooker.Game.Controllers
       private MeshInstance debugBallRight;
       private MeshInstance debugBallLeft;
       private MeshInstance debugBallMiddle;
+      private GameManager gameManager;
 
       public override void _Ready()
       {
+         gameManager = GetNode<GameManager>("%GameManager");
          whiteBall = GetNode<GenericBall>("%WhiteBall");
          areaDetector = GetNode<Area>(areaDetectorPath);
          areaDetector.Connect("body_entered", this, nameof(OnWhiteBallCollide));
@@ -61,6 +65,7 @@ namespace CrazySnooker.Game.Controllers
          projectionMesh = projection.GetNode<MeshInstance>("Mesh");
          projectionNext = GetNode<Spatial>("%ProjectionNext");
          projectionNextMesh = projectionNext.GetNode<MeshInstance>("Mesh");
+         projectionArrowNext = projectionNext.GetNode<Spatial>("arrow");
          projectionBall = GetNode<MeshInstance>("%WhiteBallProjection");
 
          debugBallTop = GetNode<MeshInstance>("%MiniBallProjectionDebugTop");
@@ -291,10 +296,11 @@ namespace CrazySnooker.Game.Controllers
                // IS A BALL
                projectionNext.GlobalTranslation = objCenter;
                Transform projectionNextTrans = projectionNext.GlobalTransform;
-               Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(objCenter + objCenter.DirectionTo(projectionFinalPos) * -1 * 5);
+               Vector3 predictionPoint = objCenter + objCenter.DirectionTo(projectionFinalPos) * -1 * 5;
+               Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(predictionPoint);
                projectionNextTrans.basis = lookAtBasisNext;
                projectionNext.GlobalTransform = projectionNextTrans;
-
+               gameManager.PredictionVec = projectionNext.GlobalTransform.basis.z;
             }
             else
             {
@@ -303,7 +309,6 @@ namespace CrazySnooker.Game.Controllers
                Transform projectionNextTrans = projectionNext.GlobalTransform;
                Vector3 normal = projectionFinalPos + minNormal * 10;
                float angle = projectionFinalPos.DirectionTo(whiteBallPos).SignedAngleTo(normal, Vector3.Up);
-               GD.Print(Mathf.Rad2Deg(angle));
                Vector3 flippedVec = normal.Rotated(Vector3.Up, angle * .5f);
                Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(flippedVec * 10);
                projectionNextTrans.basis = lookAtBasisNext;
@@ -311,9 +316,14 @@ namespace CrazySnooker.Game.Controllers
             }
 
             (projectionNextMesh.Mesh as CylinderMesh).Height = sizeNextLineProjection;
+
             Vector3 nextMeshTranslation = projectionNextMesh.Translation;
             nextMeshTranslation.z = sizeNextLineProjection / 2;
             projectionNextMesh.Translation = nextMeshTranslation;
+
+            Vector3 arrowNextTranslation = projectionArrowNext.Translation;
+            arrowNextTranslation.z = sizeNextLineProjection;
+            projectionArrowNext.Translation = arrowNextTranslation;
          }
       }
 
@@ -349,7 +359,7 @@ namespace CrazySnooker.Game.Controllers
          if (canShot)
          {
             var distanceAvg = DistanceFromInitial((Vector3)shotPos);
-            whiteBall.ApplyCentralImpulse(GlobalTransform.basis.z.Normalized() * (maxForce * distanceAvg));
+            whiteBall.AddForce(GlobalTransform.basis.z.Normalized() * (maxForce * distanceAvg) * 60, new Vector3(0,0,0));
             canShot = false;
             shotPos = null;
          }
