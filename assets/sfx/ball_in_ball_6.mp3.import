@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/ball_in_ball_6.mp3-570af7a28f17f6168dff6fef59b804c9.mp3str"
+
+[deps]
+
+source_file="res://assets/sfx/ball_in_ball_6.mp3"
+dest_files=[ "res://.import/ball_in_ball_6.mp3-570af7a28f17f6168dff6fef59b804c9.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

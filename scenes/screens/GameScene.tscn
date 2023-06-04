@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/balls/Morango.tscn" type="PackedScene" id=2]
@@ -12,6 +12,8 @@
 [ext_resource path="res://scenes/tables/TableCustom.tscn" type="PackedScene" id=10]
 [ext_resource path="res://models/arrow.glb" type="PackedScene" id=11]
 [ext_resource path="res://scenes/props/WhiteBallLimit.tscn" type="PackedScene" id=12]
+[ext_resource path="res://scenes/tables/TableCustomWalls.tscn" type="PackedScene" id=13]
+[ext_resource path="res://src/Game/Network/P2PNetwork.cs" type="Script" id=14]
 
 [sub_resource type="CylinderMesh" id=8]
 top_radius = 0.01
@@ -43,22 +45,43 @@ albedo_color = Color( 1, 1, 1, 0.592157 )
 unique_name_in_owner = true
 script = ExtResource( 6 )
 
+[node name="P2PNetwork" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource( 14 )
+playerPath = NodePath("../PoolCue")
+player2Path = NodePath("../PoolCue2")
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+unique_name_in_owner = true
+use_threads = true
+
 [node name="SpotLight" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, -0.609523, 0.792769, 0, -0.792769, -0.609523, 0, 7.93534, 0 )
+transform = Transform( 1, 0, 0, 0, -0.679787, 0.73341, 0, -0.73341, -0.679787, 0, 7.93534, 0 )
 light_energy = 3.0
 shadow_enabled = true
-spot_range = 11.1275
+spot_range = 12.4579
 spot_angle = 28.9402
 
 [node name="SpotLight2" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.46082, 0.887494, 0, -0.887494, 0.46082, 0, 7.93534, 14.2211 )
+transform = Transform( 1, 0, 0, 0, 0.532729, 0.846286, 0, -0.846286, 0.532729, 0, 7.93534, 16.0858 )
 light_energy = 3.0
 shadow_enabled = true
-spot_range = 10.5987
+spot_range = 12.0597
 spot_angle = 35.3973
 
-[node name="TableCustom" parent="." instance=ExtResource( 10 )]
+[node name="OutCamera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.920805, 0.390024, 0, -0.390024, 0.920805, 0, 6.64285, 21.107 )
+environment = ExtResource( 1 )
+current = true
+fov = 50.0
+
+[node name="Table" type="Spatial" parent="."]
+
+[node name="TableCustom" parent="Table" instance=ExtResource( 10 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
+
+[node name="TableWalls" parent="Table" instance=ExtResource( 13 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.57159 )
 
 [node name="Spawn" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.77935 )
@@ -82,16 +105,32 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.960365, 2.23913, 1.18926 )
 
 [node name="PoolCue" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.999695, 0.0247113, 0, -0.0247114, 0.999695, 0, 0, 0, 1, 0, 2.54372, 10.7926 )
+visible = false
 maxDistance = 1.4
-maxForce = 200.0
 projectionMask = 18
-ballRadius = 0.106
-sizeNextLineProjection = 0.5
 
 [node name="PoolCue" parent="PoolCue" index="0"]
 transform = Transform( -4.37722e-08, -1.86265e-09, -1, -0.0933785, 0.99563, 3.72529e-09, 0.995631, 0.0933785, -4.37114e-08, 0, 0, 0 )
 
 [node name="Camera" type="Camera" parent="PoolCue"]
+transform = Transform( -1, 1.22935e-07, -1.36904e-07, 1.86265e-09, 0.991558, 0.129661, 1.51239e-07, 0.129661, -0.991558, -0.00968136, 0.957695, -4.26277 )
+environment = ExtResource( 1 )
+fov = 56.0
+size = 6.0
+near = 0.01
+far = 4482.9
+
+[node name="PoolCue2" parent="." instance=ExtResource( 5 )]
+transform = Transform( 0.999695, 0.0247113, 0, -0.0247114, 0.999695, 0, 0, 0, 1, 0, 2.54372, 10.7926 )
+visible = false
+maxDistance = 1.4
+projectionMask = 18
+isRemote = true
+
+[node name="PoolCue" parent="PoolCue2" index="0"]
+transform = Transform( -4.37722e-08, -1.86265e-09, -1, -0.0933785, 0.99563, 3.72529e-09, 0.995631, 0.0933785, -4.37114e-08, 0, 0, 0 )
+
+[node name="Camera" type="Camera" parent="PoolCue2"]
 transform = Transform( -1, 1.22935e-07, -1.36904e-07, 1.86265e-09, 0.991558, 0.129661, 1.51239e-07, 0.129661, -0.991558, -0.00968136, 0.957695, -4.26277 )
 environment = ExtResource( 1 )
 fov = 56.0
@@ -106,154 +145,170 @@ mass = 18.0
 gravity_scale = 2.0
 angular_damp = 1.0
 
-[node name="Projection" parent="." instance=ExtResource( 8 )]
+[node name="BallsGroup" type="Spatial" parent="."]
+
+[node name="Hamburguer" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.415236, 2.15841, 4.82014 )
+
+[node name="Hamburguer3" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.473056, 2.15841, 4.81783 )
+
+[node name="Hamburguer4" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.146133, 2.15841, 5.02882 )
+
+[node name="Hamburguer6" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0411265, 2.15841, 5.22911 )
+
+[node name="Hamburguer7" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0638796, 2.15841, 5.41967 )
+
+[node name="Hamburguer5" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.315269, 2.15841, 5.02882 )
+
+[node name="Morango" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.185585, 2.15231, 4.83064 )
+
+[node name="Morango3" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.367214, 2.15231, 5.0148 )
+
+[node name="Hamburguer9" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.595067, 2.15841, 5.02882 )
+
+[node name="Morango9" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.816148, 2.15231, 5.0148 )
+
+[node name="Morango6" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.266097, 2.15231, 5.22675 )
+
+[node name="Hamburguer10" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.479243, 2.15841, 5.22911 )
+
+[node name="Morango10" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.704213, 2.15231, 5.22675 )
+
+[node name="Morango7" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.168868, 2.15231, 5.41732 )
+
+[node name="Hamburguer11" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.387759, 2.15841, 5.41967 )
+
+[node name="Morango11" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.620507, 2.15231, 5.41732 )
+
+[node name="Morango12" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0417605, 2.15231, 5.61745 )
+
+[node name="Hamburguer12" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260651, 2.15841, 5.6198 )
+
+[node name="Morango13" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.493399, 2.15231, 5.61745 )
+
+[node name="Hamburguer13" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.150331, 2.15841, 5.81686 )
+
+[node name="Morango14" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.383079, 2.15231, 5.81451 )
+
+[node name="Morango4" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0849144, 2.15231, 5.0148 )
+
+[node name="Morango5" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.186933, 2.15231, 5.22048 )
+
+[node name="Hamburguer2" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0426765, 2.15841, 4.81551 )
+
+[node name="Morango2" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260735, 2.15231, 4.83064 )
+
+[node name="Hamburguer8" parent="BallsGroup" instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.897651, 2.15841, 4.81783 )
+
+[node name="Morango8" parent="BallsGroup" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.685329, 2.15231, 4.83064 )
+
+[node name="WhiteBallLimits" type="Spatial" parent="."]
+
+[node name="WhiteBallLimit" parent="WhiteBallLimits" instance=ExtResource( 12 )]
+transform = Transform( 0.715473, 0, 0.69864, 0, 1, 0, -0.69864, 0, 0.715473, 4.31074, 2.18308, 1.63473 )
+
+[node name="WhiteBallLimit2" parent="WhiteBallLimits" instance=ExtResource( 12 )]
+transform = Transform( 0.715473, 0, -0.69864, 0, 1, 0, 0.69864, 0, 0.715473, -4.08452, 2.18308, 1.85527 )
+
+[node name="WhiteBallLimit3" parent="WhiteBallLimits" instance=ExtResource( 12 )]
+transform = Transform( 0.715473, 0, -0.69864, 0, 1, 0, 0.69864, 0, 0.715473, 4.462, 2.18308, 15.3233 )
+
+[node name="WhiteBallLimit4" parent="WhiteBallLimits" instance=ExtResource( 12 )]
+transform = Transform( 0.715473, 0, 0.69864, 0, 1, 0, -0.69864, 0, 0.715473, -4.223, 2.18308, 15.109 )
+
+[node name="WhiteBallLimit5" parent="WhiteBallLimits" instance=ExtResource( 12 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5123, 2.18308, 8.44318 )
+
+[node name="WhiteBallLimit6" parent="WhiteBallLimits" instance=ExtResource( 12 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.80966, 2.18308, 8.44318 )
+
+[node name="ProjectionGroup" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.989856, 0 )
+
+[node name="Projection" parent="ProjectionGroup" instance=ExtResource( 8 )]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.43239, 8.50809 )
 
-[node name="Mesh" parent="Projection" index="0"]
+[node name="Mesh" parent="ProjectionGroup/Projection" index="0"]
 mesh = SubResource( 8 )
+skeleton = NodePath("../../..")
 
-[node name="ProjectionNext" parent="." instance=ExtResource( 8 )]
+[node name="ProjectionNext" parent="ProjectionGroup" instance=ExtResource( 8 )]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.28187, 8.50809 )
 
-[node name="Mesh" parent="ProjectionNext" index="0"]
+[node name="Mesh" parent="ProjectionGroup/ProjectionNext" index="0"]
 mesh = SubResource( 9 )
+skeleton = NodePath("../../..")
 
-[node name="arrow" parent="ProjectionNext" instance=ExtResource( 11 )]
+[node name="arrow" parent="ProjectionGroup/ProjectionNext" instance=ExtResource( 11 )]
 transform = Transform( 0.05, 0, 0, 0, -2.18557e-09, -0.05, 0, 0.05, -2.18557e-09, 0, 0, 0 )
 
-[node name="WhiteBallProjection" type="MeshInstance" parent="."]
+[node name="WhiteBallProjection" type="MeshInstance" parent="ProjectionGroup"]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
 mesh = SubResource( 6 )
+skeleton = NodePath("../..")
 material/0 = SubResource( 7 )
 
-[node name="Hamburguer" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.415236, 2.15841, 4.82014 )
-
-[node name="Hamburguer3" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.473056, 2.15841, 4.81783 )
-
-[node name="Hamburguer4" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.146133, 2.15841, 5.02882 )
-
-[node name="Hamburguer6" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0411265, 2.15841, 5.22911 )
-
-[node name="Hamburguer7" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0638796, 2.15841, 5.41967 )
-
-[node name="Hamburguer5" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.315269, 2.15841, 5.02882 )
-
-[node name="Morango" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.185585, 2.15231, 4.83064 )
-
-[node name="Morango3" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.367214, 2.15231, 5.0148 )
-
-[node name="Hamburguer9" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.595067, 2.15841, 5.02882 )
-
-[node name="Morango9" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.816148, 2.15231, 5.0148 )
-
-[node name="Morango6" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.266097, 2.15231, 5.22675 )
-
-[node name="Hamburguer10" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.479243, 2.15841, 5.22911 )
-
-[node name="Morango10" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.704213, 2.15231, 5.22675 )
-
-[node name="Morango7" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.168868, 2.15231, 5.41732 )
-
-[node name="Hamburguer11" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.387759, 2.15841, 5.41967 )
-
-[node name="Morango11" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.620507, 2.15231, 5.41732 )
-
-[node name="Morango12" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0417605, 2.15231, 5.61745 )
-
-[node name="Hamburguer12" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260651, 2.15841, 5.6198 )
-
-[node name="Morango13" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.493399, 2.15231, 5.61745 )
-
-[node name="Hamburguer13" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.150331, 2.15841, 5.81686 )
-
-[node name="Morango14" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.383079, 2.15231, 5.81451 )
-
-[node name="Morango4" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0849144, 2.15231, 5.0148 )
-
-[node name="Morango5" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.186933, 2.15231, 5.22048 )
-
-[node name="Hamburguer2" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0426765, 2.15841, 4.81551 )
-
-[node name="Morango2" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260735, 2.15231, 4.83064 )
-
-[node name="Hamburguer8" parent="." instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.897651, 2.15841, 4.81783 )
-
-[node name="Morango8" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.685329, 2.15231, 4.83064 )
-
-[node name="MiniBallProjectionDebugTop" parent="." instance=ExtResource( 9 )]
+[node name="MiniBallProjectionDebugTop" parent="ProjectionGroup" instance=ExtResource( 9 )]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
+skeleton = NodePath("../..")
 
-[node name="MiniBallProjectionDebugBottom" parent="." instance=ExtResource( 9 )]
+[node name="MiniBallProjectionDebugBottom" parent="ProjectionGroup" instance=ExtResource( 9 )]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
+skeleton = NodePath("../..")
 
-[node name="MiniBallProjectionDebugLeft" parent="." instance=ExtResource( 9 )]
+[node name="MiniBallProjectionDebugLeft" parent="ProjectionGroup" instance=ExtResource( 9 )]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
+skeleton = NodePath("../..")
 
-[node name="MiniBallProjectionDebugRight" parent="." instance=ExtResource( 9 )]
+[node name="MiniBallProjectionDebugRight" parent="ProjectionGroup" instance=ExtResource( 9 )]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
+skeleton = NodePath("../..")
 
-[node name="MiniBallProjectionDebugMiddle" parent="." instance=ExtResource( 9 )]
+[node name="MiniBallProjectionDebugMiddle" parent="ProjectionGroup" instance=ExtResource( 9 )]
 unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
-
-[node name="WhiteBallLimit" parent="." instance=ExtResource( 12 )]
-transform = Transform( 0.715473, 0, 0.69864, 0, 1, 0, -0.69864, 0, 0.715473, 4.31074, 2.18308, 1.63473 )
-
-[node name="WhiteBallLimit2" parent="." instance=ExtResource( 12 )]
-transform = Transform( 0.715473, 0, -0.69864, 0, 1, 0, 0.69864, 0, 0.715473, -4.08452, 2.18308, 1.85527 )
-
-[node name="WhiteBallLimit3" parent="." instance=ExtResource( 12 )]
-transform = Transform( 0.715473, 0, -0.69864, 0, 1, 0, 0.69864, 0, 0.715473, 4.462, 2.18308, 15.3233 )
-
-[node name="WhiteBallLimit4" parent="." instance=ExtResource( 12 )]
-transform = Transform( 0.715473, 0, 0.69864, 0, 1, 0, -0.69864, 0, 0.715473, -4.223, 2.18308, 15.109 )
-
-[node name="WhiteBallLimit5" parent="." instance=ExtResource( 12 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5123, 2.18308, 8.44318 )
-
-[node name="WhiteBallLimit6" parent="." instance=ExtResource( 12 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.80966, 2.18308, 8.44318 )
+skeleton = NodePath("../..")
 
 [editable path="PoolCue"]
-[editable path="Projection"]
-[editable path="ProjectionNext"]
+[editable path="PoolCue2"]
+[editable path="ProjectionGroup/Projection"]
+[editable path="ProjectionGroup/ProjectionNext"]

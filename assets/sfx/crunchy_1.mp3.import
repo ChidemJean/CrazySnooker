@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/crunchy_1.mp3-5028cf13a65543a1c4b98f084c90f369.mp3str"
+
+[deps]
+
+source_file="res://assets/sfx/crunchy_1.mp3"
+dest_files=[ "res://.import/crunchy_1.mp3-5028cf13a65543a1c4b98f084c90f369.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

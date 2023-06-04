@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=9 format=2]
+
+[ext_resource path="res://src/Global/AudioGroup.cs" type="Script" id=1]
+[ext_resource path="res://assets/sfx/cue_in_whiteball.mp3" type="AudioStream" id=2]
+[ext_resource path="res://assets/sfx/cue_in_whiteball_2.mp3" type="AudioStream" id=3]
+[ext_resource path="res://assets/sfx/cue_in_whiteball_6.mp3" type="AudioStream" id=4]
+[ext_resource path="res://assets/sfx/cue_in_whiteball_5.mp3" type="AudioStream" id=5]
+[ext_resource path="res://assets/sfx/cue_in_whiteball_3.mp3" type="AudioStream" id=6]
+[ext_resource path="res://assets/sfx/cue_in_whiteball_4.mp3" type="AudioStream" id=7]
+[ext_resource path="res://assets/sfx/cue_in_whiteball_7.mp3" type="AudioStream" id=8]
+
+[resource]
+script = ExtResource( 1 )
+audios = [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 5 ), ExtResource( 4 ), ExtResource( 8 ) ]
+playMode = 2

@@ -8,7 +8,7 @@ extents = Vector3( 0.460963, 0.312124, 0.668806 )
 [node name="WhiteBallLimit" type="Area"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 4.38425, 2.18308, 1.67884 )
 collision_layer = 32
-collision_mask = 8
+collision_mask = 24
 script = ExtResource( 1 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]

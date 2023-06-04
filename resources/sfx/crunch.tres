@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://src/Global/AudioGroup.cs" type="Script" id=1]
+[ext_resource path="res://assets/sfx/crunchy_1.mp3" type="AudioStream" id=2]
+
+[resource]
+script = ExtResource( 1 )
+audios = [ ExtResource( 2 ) ]
+playMode = 1

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" load_steps=11 format=2]
+
+[ext_resource path="res://src/Global/AudioGroup.cs" type="Script" id=1]
+[ext_resource path="res://assets/sfx/ball_in_ball_4.mp3" type="AudioStream" id=2]
+[ext_resource path="res://assets/sfx/ball_in_ball.mp3" type="AudioStream" id=3]
+[ext_resource path="res://assets/sfx/ball_in_ball_7.mp3" type="AudioStream" id=4]
+[ext_resource path="res://assets/sfx/ball_in_ball_5.mp3" type="AudioStream" id=5]
+[ext_resource path="res://assets/sfx/ball_in_ball_2.mp3" type="AudioStream" id=6]
+[ext_resource path="res://assets/sfx/ball_in_ball_6.mp3" type="AudioStream" id=7]
+[ext_resource path="res://assets/sfx/ball_in_ball_3.mp3" type="AudioStream" id=8]
+[ext_resource path="res://assets/sfx/ball_in_ball_8.mp3" type="AudioStream" id=9]
+[ext_resource path="res://assets/sfx/ball_in_ball_9.mp3" type="AudioStream" id=10]
+
+[resource]
+script = ExtResource( 1 )
+audios = [ ExtResource( 3 ), ExtResource( 6 ), ExtResource( 8 ), ExtResource( 2 ), ExtResource( 5 ), ExtResource( 7 ), ExtResource( 4 ), ExtResource( 9 ), ExtResource( 10 ) ]
+playMode = 1

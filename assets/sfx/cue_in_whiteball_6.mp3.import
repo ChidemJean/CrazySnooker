@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/cue_in_whiteball_6.mp3-f0468b9d2f772323da50a4430910db43.mp3str"
+
+[deps]
+
+source_file="res://assets/sfx/cue_in_whiteball_6.mp3"
+dest_files=[ "res://.import/cue_in_whiteball_6.mp3-f0468b9d2f772323da50a4430910db43.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

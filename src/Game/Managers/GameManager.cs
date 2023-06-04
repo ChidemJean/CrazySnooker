@@ -17,7 +17,7 @@ namespace CrazySnooker.Game.Managers
 
         public override void _Ready()
         {
-            Input.SetMouseMode(Input.MouseModeEnum.Captured);
+            
         }
 
         public void EmitResetWhiteBall()

@@ -1,10 +1,116 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://scenes/screens/GameScene.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/Global/AudioManager.cs" type="Script" id=2]
+[ext_resource path="res://assets/musics/music_theme.mp3" type="AudioStream" id=3]
+[ext_resource path="res://resources/sfx/cue_in_whiteball.tres" type="Resource" id=4]
+[ext_resource path="res://resources/sfx/ball_in_ball.tres" type="Resource" id=5]
+[ext_resource path="res://resources/sfx/crunch.tres" type="Resource" id=6]
+[ext_resource path="res://assets/fonts/baloom.tres" type="DynamicFont" id=7]
+[ext_resource path="res://src/MainScene.cs" type="Script" id=8]
+[ext_resource path="res://assets/materials/UI/Rainbow.tres" type="Material" id=9]
+[ext_resource path="res://assets/fonts/baloom_no_outline.tres" type="DynamicFont" id=10]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 0.831373 )
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 1, 1, 1, 0.164706 )
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_top = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id=2]
+content_margin_left = 15.0
+content_margin_right = 15.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color( 1, 1, 1, 0.164706 )
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_top = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.509804, 0.219608, 1, 1 )
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0.141176, 0.0117647, 0.364706, 1 )
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.509804, 0.219608, 1, 1 )
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.282353, 0.0666667, 0.643137, 1 )
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
 
 [node name="MainScene" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 8 )
+ipLabelPath = NodePath("Hud/MarginContainer/Control/Host/IP")
+hostCtnPath = NodePath("Hud/MarginContainer/Control/Host")
+enterIpPath = NodePath("Hud/MarginContainer/Control/EnterIP")
+
+[node name="MainMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+autoplay = true
+bus = "music"
+
+[node name="AudioManager" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource( 2 )
+qtdPlayers2D = 0
+qtdPlayers3D = 12
+bus2D = "2d"
+bus3D = "3d"
+sounds = {
+"ball_in_ball": ExtResource( 5 ),
+"crunch": ExtResource( 6 ),
+"cue_in_whiteball": ExtResource( 4 )
+}
 
 [node name="ViewportContainer" type="ViewportContainer" parent="."]
 anchor_right = 1.0
@@ -12,10 +118,10 @@ anchor_bottom = 1.0
 stretch = true
 
 [node name="Viewport" type="Viewport" parent="ViewportContainer"]
-size = Vector2( 1024, 600 )
+size = Vector2( 1600, 900 )
 own_world = true
 handle_input_locally = false
-msaa = 1
+fxaa = true
 render_target_update_mode = 3
 audio_listener_enable_2d = true
 audio_listener_enable_3d = true
@@ -25,3 +131,244 @@ shadow_atlas_quad_2 = 4
 shadow_atlas_quad_3 = 5
 
 [node name="GameScene" parent="ViewportContainer/Viewport" instance=ExtResource( 1 )]
+unique_name_in_owner = true
+
+[node name="Hud" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Hud"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+custom_constants/margin_right = 40
+custom_constants/margin_top = 40
+custom_constants/margin_left = 40
+custom_constants/margin_bottom = 40
+
+[node name="Control" type="Control" parent="Hud/MarginContainer"]
+margin_left = 40.0
+margin_top = 40.0
+margin_right = 1560.0
+margin_bottom = 860.0
+mouse_filter = 2
+
+[node name="Host" type="HBoxContainer" parent="Hud/MarginContainer/Control"]
+visible = false
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -43.0
+margin_right = 40.0
+custom_constants/separation = 20
+
+[node name="Host" type="Label" parent="Hud/MarginContainer/Control/Host"]
+material = ExtResource( 9 )
+margin_right = 87.0
+margin_bottom = 43.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Hosting"
+
+[node name="IP" type="Label" parent="Hud/MarginContainer/Control/Host"]
+margin_left = 107.0
+margin_right = 198.0
+margin_bottom = 43.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "127.0.0.1"
+
+[node name="HelpBox" type="VBoxContainer" parent="Hud/MarginContainer/Control"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -218.0
+margin_top = -90.0
+custom_constants/separation = -5
+alignment = 2
+
+[node name="HostHelp" type="HBoxContainer" parent="Hud/MarginContainer/Control/HelpBox"]
+margin_top = 9.0
+margin_right = 230.0
+margin_bottom = 52.0
+grow_horizontal = 0
+custom_constants/separation = 10
+alignment = 2
+
+[node name="Msg" type="Label" parent="Hud/MarginContainer/Control/HelpBox/HostHelp"]
+margin_left = 12.0
+margin_right = 87.0
+margin_bottom = 43.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Aperte"
+align = 2
+
+[node name="H" type="Label" parent="Hud/MarginContainer/Control/HelpBox/HostHelp"]
+material = ExtResource( 9 )
+margin_left = 97.0
+margin_right = 113.0
+margin_bottom = 43.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "H"
+
+[node name="Msg2" type="Label" parent="Hud/MarginContainer/Control/HelpBox/HostHelp"]
+margin_left = 123.0
+margin_right = 230.0
+margin_bottom = 43.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "para criar"
+align = 2
+
+[node name="JoinHelp" type="HBoxContainer" parent="Hud/MarginContainer/Control/HelpBox"]
+margin_top = 47.0
+margin_right = 230.0
+margin_bottom = 90.0
+grow_horizontal = 0
+custom_constants/separation = 10
+alignment = 2
+
+[node name="Msg" type="Label" parent="Hud/MarginContainer/Control/HelpBox/JoinHelp"]
+margin_right = 75.0
+margin_bottom = 43.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Aperte"
+align = 2
+
+[node name="J" type="Label" parent="Hud/MarginContainer/Control/HelpBox/JoinHelp"]
+material = ExtResource( 9 )
+margin_left = 85.0
+margin_right = 95.0
+margin_bottom = 43.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "J"
+
+[node name="Msg2" type="Label" parent="Hud/MarginContainer/Control/HelpBox/JoinHelp"]
+margin_left = 105.0
+margin_right = 230.0
+margin_bottom = 43.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "para entrar"
+align = 2
+
+[node name="Loading" type="Label" parent="Hud/MarginContainer/Control"]
+visible = false
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -132.0
+margin_top = -43.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Conectando ..."
+align = 2
+
+[node name="EnterIP" type="Panel" parent="Hud/MarginContainer/Control"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -225.0
+margin_top = -225.0
+margin_right = 225.0
+margin_bottom = 125.0
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 450, 350 )
+custom_styles/panel = SubResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Hud/MarginContainer/Control/EnterIP"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -191.0
+margin_top = -90.0
+margin_right = 191.0
+margin_bottom = 90.0
+grow_horizontal = 2
+custom_constants/separation = 20
+
+[node name="Label" type="Label" parent="Hud/MarginContainer/Control/EnterIP/VBoxContainer"]
+margin_right = 382.0
+margin_bottom = 43.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Entrar na partida"
+align = 1
+
+[node name="LineEdit" type="LineEdit" parent="Hud/MarginContainer/Control/EnterIP/VBoxContainer"]
+margin_top = 63.0
+margin_right = 382.0
+margin_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+custom_fonts/font = ExtResource( 10 )
+custom_styles/focus = SubResource( 3 )
+custom_styles/normal = SubResource( 2 )
+align = 1
+placeholder_text = "Digite o IP"
+
+[node name="Control" type="Control" parent="Hud/MarginContainer/Control/EnterIP/VBoxContainer"]
+margin_top = 130.0
+margin_right = 382.0
+margin_bottom = 180.0
+rect_min_size = Vector2( 0, 50 )
+
+[node name="Button" type="Button" parent="Hud/MarginContainer/Control/EnterIP/VBoxContainer/Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -35.0
+margin_top = -21.5
+margin_right = 35.0
+margin_bottom = 21.5
+grow_horizontal = 2
+grow_vertical = 2
+rect_min_size = Vector2( 250, 0 )
+custom_fonts/font = ExtResource( 10 )
+custom_styles/hover = SubResource( 4 )
+custom_styles/pressed = SubResource( 6 )
+custom_styles/focus = SubResource( 7 )
+custom_styles/normal = SubResource( 5 )
+text = "Entrar"
+
+[node name="Label2" type="Label" parent="Hud/MarginContainer/Control/EnterIP/VBoxContainer"]
+visible = false
+margin_top = 200.0
+margin_right = 382.0
+margin_bottom = 243.0
+custom_colors/font_color = Color( 1, 0.215686, 0.215686, 1 )
+custom_fonts/font = ExtResource( 10 )
+text = "Ocorreu um erro"
+align = 1
+
+[editable path="ViewportContainer/Viewport/GameScene"]
+[editable path="ViewportContainer/Viewport/GameScene/PoolCue"]
+[editable path="ViewportContainer/Viewport/GameScene/PoolCue2"]
+[editable path="ViewportContainer/Viewport/GameScene/ProjectionGroup/Projection"]
+[editable path="ViewportContainer/Viewport/GameScene/ProjectionGroup/ProjectionNext"]

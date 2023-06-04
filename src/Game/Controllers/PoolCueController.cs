@@ -3,6 +3,7 @@ using System;
 using CrazySnooker.Game.Entities.Balls;
 using CrazySnooker.Extensions;
 using CrazySnooker.Game.Managers;
+using CrazySnooker.Global;
 
 namespace CrazySnooker.Game.Controllers
 {
@@ -53,10 +54,17 @@ namespace CrazySnooker.Game.Controllers
       private MeshInstance debugBallLeft;
       private MeshInstance debugBallMiddle;
       private GameManager gameManager;
+      private AudioManager audioManager;
+      
+      public int playerID = -1;
+
+      [Export]
+      public bool isRemote = false;
 
       public override void _Ready()
       {
          gameManager = GetNode<GameManager>("%GameManager");
+         audioManager = GetNode<AudioManager>("/root/MainScene/AudioManager");
          whiteBall = GetNode<GenericBall>("%WhiteBall");
          areaDetector = GetNode<Area>(areaDetectorPath);
          areaDetector.Connect("body_entered", this, nameof(OnWhiteBallCollide));
@@ -85,9 +93,11 @@ namespace CrazySnooker.Game.Controllers
 
       public override void _PhysicsProcess(float delta)
       {
+         if (playerID == -1) return;
+         
          var forward = GlobalTransform.basis.z.Normalized();
          GlobalTranslation = whiteBall.GlobalTransform.origin - forward * .1f;
-         if (whiteBall.LinearVelocity.Length() == 0)
+         if (whiteBall.LinearVelocity.Length() < .1f)
          {
             areaDetector.Visible = true;
             UpdateProjection();
@@ -108,6 +118,8 @@ namespace CrazySnooker.Game.Controllers
 
       public override void _Input(InputEvent ev)
       {
+         if (isRemote || playerID == -1) return;
+
          if (ev is InputEventMouseMotion)
          {
             Vector2 rel = (ev as InputEventMouseMotion).Relative;
@@ -348,6 +360,7 @@ namespace CrazySnooker.Game.Controllers
 
       public void Shot()
       {
+         if (initialPos == null) return;
          canShot = true;
          shotPos = areaDetector.Translation;
          SceneTreeTween tween = GetTree().CreateTween();
@@ -360,6 +373,7 @@ namespace CrazySnooker.Game.Controllers
          {
             var distanceAvg = DistanceFromInitial((Vector3)shotPos);
             whiteBall.AddForce(GlobalTransform.basis.z.Normalized() * (maxForce * distanceAvg) * 60, new Vector3(0,0,0));
+            audioManager.Play("cue_in_whiteball", null, whiteBall.GlobalTranslation);
             canShot = false;
             shotPos = null;
          }
