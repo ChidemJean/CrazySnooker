@@ -8,5 +8,8 @@ namespace CrazySnooker.Game.Network.Messages
    public class UpdatePackage
    {
 
+		[Key(0)]
+		public BallState[] ballStates;
+
    }
 }

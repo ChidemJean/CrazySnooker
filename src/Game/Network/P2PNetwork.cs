@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Text;
 using CrazySnooker.Game.Controllers;
+using CrazySnooker.Game.Managers;
 using CrazySnooker.Game.Entities.Balls;
 using CrazySnooker.Game.Network.Messages;
 using MessagePack;
@@ -19,31 +20,18 @@ namespace CrazySnooker.Game.Network
       HTTPRequest httpRequest;
       MainScene mainScene;
       public bool isConnected = false;
-      public bool isHosting = false;
-
-      [Export]
-      private NodePath playerYouPath;
-
-      [Export]
-      private NodePath playerOpponentPath;
-
-      private PoolCueController playerYou;
-      private PoolCueController playerOpponent;
-
-      public int playerTurnId = -1;
-
-		public WhiteBall whiteBall;
 
 		private MessagePackSerializerOptions lz4Options;
+
+		private GameManager gameManager;
 
       public override void _Ready()
       {
          mainScene = GetNode<MainScene>("/root/MainScene");
          httpRequest = GetNode<HTTPRequest>("%HTTPRequest");
-         whiteBall = GetNode<WhiteBall>("%WhiteBall");
+         gameManager = GetNode<GameManager>("%GameManager");
          httpRequest.Connect("request_completed", this, "OnRequestCompleted");
-         playerYou = GetNode<PoolCueController>(playerYouPath);
-         playerOpponent = GetNode<PoolCueController>(playerOpponentPath);
+         
          isConnected = false;
 
          GetTree().Connect("connected_to_server", this, nameof(OnConnectToServer));
@@ -62,7 +50,7 @@ namespace CrazySnooker.Game.Network
          var host = new NetworkedMultiplayerENet();
          host.CreateServer(HOST_PORT);
          GetTree().NetworkPeer = host;
-         isHosting = true;
+         gameManager.isHosting = true;
          mainScene.ChangeState(MainScene.GameState.CONNECTING);
          OnConnectToServer();
       }
@@ -77,42 +65,30 @@ namespace CrazySnooker.Game.Network
 
       public void OnConnectToServer()
       {
-         if (isHosting) GetPublicIP();
+         if (gameManager.isHosting) GetPublicIP();
          GD.Print("conectado");
          isConnected = true;
-         mainScene.ChangeState(isHosting ? MainScene.GameState.WAITING_OPPONENT : MainScene.GameState.CONNECTED);
-         playerYou.UpdateID(GetTree().GetNetworkUniqueId());
+         mainScene.ChangeState(gameManager.isHosting ? MainScene.GameState.WAITING_OPPONENT : MainScene.GameState.CONNECTED);
+         gameManager.playerYou.UpdateID(GetTree().GetNetworkUniqueId());
       }
 
       public void OnPeerConnected(int id)
       {
          GD.Print("oponente conectado");
-         playerOpponent.UpdateID(id);
+         gameManager.playerOpponent.UpdateID(id);
 
-         if (isHosting)
+         if (gameManager.isHosting)
          {
             mainScene.ChangeState(MainScene.GameState.CONNECTED);
          }
-         InitFirstTurn();
-      }
-
-      public void InitFirstTurn()
-      {
-         if (isHosting)
-         {
-            int idTurn = playerYou.playerID;
-            playerTurnId = idTurn;
-            SendInitTurn(idTurn);
-            playerYou.ChangeTurn(idTurn);
-            playerOpponent.ChangeTurn(idTurn);
-         }
+         gameManager.InitFirstTurn();
       }
 
       public void OnPeerDisconnected(int id)
       {
-         if (id != playerYou.playerID)
+         if (id != gameManager.playerYou.playerID)
          {
-            playerOpponent.UpdateID(-1);
+            gameManager.playerOpponent.UpdateID(-1);
             GD.Print("oponente disconectado");
          }
       }
@@ -143,10 +119,7 @@ namespace CrazySnooker.Game.Network
       [Remote]
       public async void ReceiveInitTurn(int id, int idTurn)
       {
-         GD.Print($"{id}: turno passou para {idTurn}");
-         playerTurnId = idTurn;
-         playerYou.ChangeTurn(idTurn);
-         playerOpponent.ChangeTurn(idTurn);
+			gameManager.UpdateTurn(id, idTurn);
       }
 
       public void SendRotationCue(Vector3 rotation)
@@ -158,7 +131,7 @@ namespace CrazySnooker.Game.Network
       [Remote]
       public async void ReceiveRotationCue(int id, Vector3 rotation)
       {
-         playerOpponent.UpdateRotationCue(rotation);
+         gameManager.playerOpponent.UpdateRotationCue(rotation);
       }
 
       public void SendMoveCue(int move)
@@ -170,7 +143,7 @@ namespace CrazySnooker.Game.Network
       [Remote]
       public async void ReceiveMoveCue(int id, int move)
       {
-         playerOpponent.Move(move);
+         gameManager.playerOpponent.Move(move);
       }
 
       public void SendShot()
@@ -182,7 +155,7 @@ namespace CrazySnooker.Game.Network
       [Remote]
       public async void ReceiveShot(int id)
       {
-         playerOpponent.Shot();
+         gameManager.playerOpponent.Shot();
       }
 
       public void SendWhiteBallState(BallState whiteBallState)
@@ -195,7 +168,20 @@ namespace CrazySnooker.Game.Network
       public void ReceiveWhiteBallState(byte[] bytesState)
       {
          var state = MessagePackSerializer.Deserialize<BallState>(bytesState, lz4Options);
-			whiteBall.networkState = state;
+			gameManager.whiteBall.networkState = state;
+      }
+
+		public void SendBallsState(UpdatePackage updatePackage)
+      {
+         var bytesState = MessagePackSerializer.Serialize(updatePackage, lz4Options);
+         Rpc(nameof(ReceiveBallsState), bytesState);
+      }
+
+		[Remote]
+      public void ReceiveBallsState(byte[] bytesState)
+      {
+         var state = MessagePackSerializer.Deserialize<UpdatePackage>(bytesState, lz4Options);
+			gameManager.BallsPackageReceive(state);
       }
    }
 }

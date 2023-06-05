@@ -44,12 +44,13 @@ albedo_color = Color( 1, 1, 1, 0.592157 )
 [node name="GameManager" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource( 6 )
+ballsGroupPath = NodePath("../BallsGroup")
+playerYouPath = NodePath("../PoolCueYou")
+playerOpponentPath = NodePath("../PoolCueOpponent")
 
 [node name="P2PNetwork" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource( 14 )
-playerYouPath = NodePath("../PoolCueYou")
-playerOpponentPath = NodePath("../PoolCueOpponent")
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
 unique_name_in_owner = true
@@ -76,6 +77,7 @@ current = true
 fov = 50.0
 
 [node name="PoolCueYou" parent="." instance=ExtResource( 5 )]
+projectionMask = 18
 
 [node name="PoolCueOpponent" parent="." instance=ExtResource( 5 )]
 isRemote = true
@@ -144,17 +146,11 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.367214, 2.15231, 5.0148 )
 [node name="Hamburguer9" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.595067, 2.15841, 5.02882 )
 
-[node name="Morango9" parent="BallsGroup" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.816148, 2.15231, 5.0148 )
-
 [node name="Morango6" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.266097, 2.15231, 5.22675 )
 
 [node name="Hamburguer10" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.479243, 2.15841, 5.22911 )
-
-[node name="Morango10" parent="BallsGroup" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.704213, 2.15231, 5.22675 )
 
 [node name="Morango7" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.168868, 2.15231, 5.41732 )
@@ -162,23 +158,14 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.168868, 2.15231, 5.41732 )
 [node name="Hamburguer11" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.387759, 2.15841, 5.41967 )
 
-[node name="Morango11" parent="BallsGroup" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.620507, 2.15231, 5.41732 )
-
 [node name="Morango12" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0417605, 2.15231, 5.61745 )
 
 [node name="Hamburguer12" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260651, 2.15841, 5.6198 )
 
-[node name="Morango13" parent="BallsGroup" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.493399, 2.15231, 5.61745 )
-
 [node name="Hamburguer13" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.150331, 2.15841, 5.81686 )
-
-[node name="Morango14" parent="BallsGroup" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.383079, 2.15231, 5.81451 )
 
 [node name="Morango4" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0849144, 2.15231, 5.0148 )
@@ -191,9 +178,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0426765, 2.15841, 4.81551 )
 
 [node name="Morango2" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260735, 2.15231, 4.83064 )
-
-[node name="Hamburguer8" parent="BallsGroup" instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.897651, 2.15841, 4.81783 )
 
 [node name="Morango8" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.685329, 2.15231, 4.83064 )

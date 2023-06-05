@@ -99,7 +99,6 @@ namespace CrazySnooker.Game.Controllers
       public void UpdateID(int id)
       {
          playerID = id;
-         GD.Print($"{(isRemote ? "oponente" : "você")}: entrou {id}");
       }
 
       public void ChangeTurn(int id)
@@ -118,7 +117,7 @@ namespace CrazySnooker.Game.Controllers
 
       public void OnWhiteBallCollide(Node bodyEntered)
       {
-         if (bodyEntered is WhiteBall && network.isHosting)
+         if (bodyEntered is WhiteBall && gameManager.isHosting)
          {
             ApplyImpulse();
          }
@@ -126,42 +125,44 @@ namespace CrazySnooker.Game.Controllers
 
       public override void _PhysicsProcess(float delta)
       {
-         if (playerID == -1 || network.playerTurnId != playerID) return;
-         if (network.isHosting && Engine.GetPhysicsFrames() % 2 == 0)
-         {
-            network.SendWhiteBallState(new BallState()
-            {
-               angularVelocity = MathUtils.Vector3ToFloatArray(whiteBall.AngularVelocity),
-               linearVelocity = MathUtils.Vector3ToFloatArray(whiteBall.LinearVelocity),
-               position = MathUtils.Vector3ToFloatArray(whiteBall.GlobalTransform.origin),
-               orientation = MathUtils.Vector3ToFloatArray(whiteBall.GlobalTransform.basis.GetEuler())
-            });
-         }
+         if (playerID == -1) return;
 
-         var forward = GlobalTransform.basis.z.Normalized();
-         GlobalTranslation = whiteBall.GlobalTransform.origin - forward * .1f;
-         if (whiteBall.LinearVelocity.Length() < .1f && !isRemote)
+         if (gameManager.playerTurnId == playerID)
          {
-            areaDetector.Visible = true;
-            UpdateProjection();
+            if (Engine.GetPhysicsFrames() % 10 == 0)
+            {
+               gameManager.SendBallsPackage();
+            }
+            var forward = GlobalTransform.basis.z.Normalized();
+            GlobalTranslation = whiteBall.GlobalTransform.origin - forward * .1f;
+            if (whiteBall.LinearVelocity.Length() < .1f)
+            {
+               areaDetector.Visible = true;
+               UpdateProjection();
+            }
+            else
+            {
+               areaDetector.Visible = false;
+               UpdateProjectionVisible(false);
+            }
          }
-         else
-         {
-            areaDetector.Visible = false;
-            projectionBall.Visible = false;
-            projection.Visible = false;
-            projectionNext.Visible = false;
-            debugBallTop.Visible = false;
-            debugBallBottom.Visible = false;
-            debugBallRight.Visible = false;
-            debugBallLeft.Visible = false;
-            debugBallMiddle.Visible = false;
-         }
+      }
+
+      public void UpdateProjectionVisible(bool visible)
+      {
+         projectionBall.Visible = visible;
+         projection.Visible = visible;
+         projectionNext.Visible = visible;
+         debugBallTop.Visible = visible;
+         debugBallBottom.Visible = visible;
+         debugBallRight.Visible = visible;
+         debugBallLeft.Visible = visible;
+         debugBallMiddle.Visible = visible;
       }
 
       public override void _Input(InputEvent ev)
       {
-         if (isRemote || (playerID == -1 || network.playerTurnId != playerID)) return;
+         if (isRemote || (playerID == -1 || gameManager.playerTurnId != playerID)) return;
 
          if (ev is InputEventMouseMotion)
          {
@@ -229,11 +230,16 @@ namespace CrazySnooker.Game.Controllers
 
       public void UpdateProjection()
       {
-         // if (!canShot) return;
+         if (isRemote || gameManager.playerTurnId != playerID)
+         {
+            UpdateProjectionVisible(false);
+            return;
+         }
+
+         UpdateProjectionVisible(true);
 
          Vector3 forward = GlobalTransform.basis.z.Normalized();
          Vector3 whiteBallPos = whiteBall.GlobalTransform.origin;
-         projection.Visible = true;
          PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
 
          Vector3 forwardRay = (forward * 1000);
