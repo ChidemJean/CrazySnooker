@@ -76,6 +76,8 @@ namespace CrazySnooker.Global
 
             for (int i = 0; i < qtdPlayers3D; i++) {
                 AudioStreamPlayer3D stream = new AudioStreamPlayer3D();
+                stream.DopplerTracking = AudioStreamPlayer3D.DopplerTrackingEnum.IdleStep;
+                stream.AttenuationFilterCutoffHz = 20500;
                 main3dNode.AddChild(stream);
                 available3D.Enqueue(stream);
                 stream.Connect("finished", this, nameof(OnStream3DFinished), new Godot.Collections.Array() { stream });

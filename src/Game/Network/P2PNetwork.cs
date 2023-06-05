@@ -110,14 +110,14 @@ namespace CrazySnooker.Game.Network
          //  JSONParseResult json = JSON.Parse(Encoding.UTF8.GetString(body));
       }
 
-      public void SendInitTurn(int idTurn)
+      public void SendUpdateTurn(int idTurn)
       {
          int id = GetTree().GetNetworkUniqueId();
-         Rpc("ReceiveInitTurn", id, idTurn);
+         Rpc("ReceiveUpdateTurn", id, idTurn);
       }
 
       [Remote]
-      public async void ReceiveInitTurn(int id, int idTurn)
+      public async void ReceiveUpdateTurn(int id, int idTurn)
       {
 			gameManager.UpdateTurn(id, idTurn);
       }

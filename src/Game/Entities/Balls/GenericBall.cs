@@ -29,6 +29,9 @@ namespace CrazySnooker.Game.Entities.Balls
       P2PNetwork network;
       public bool exiting = false;
 
+      [Export]
+      public BallCategory category;
+
       public override void _Ready()
       {
          gameManager = GetNode<GameManager>("%GameManager");

@@ -14,6 +14,12 @@ namespace CrazySnooker.Game.Managers
       [Signal]
       private delegate void ResetWhiteBall();
 
+		[Signal]
+      private delegate void WinnerEvent();
+
+		[Signal]
+      private delegate void LooserEvent();
+
       private Vector3 predictionVec = Vector3.Zero;
       public int predictionBallIdx = -1;
       public Vector3 PredictionVec
@@ -46,6 +52,11 @@ namespace CrazySnooker.Game.Managers
       public WhiteBall whiteBall;
       public P2PNetwork network;
 
+      public BallCategory yourBallCategory = BallCategory.UNDEFINED;
+      public BallCategory opponentBallCategory = BallCategory.UNDEFINED;
+
+      public Dictionary<BallCategory, int> categoriesQtd = new Dictionary<BallCategory, int>();
+
       public override void _Ready()
       {
          network = GetNode<P2PNetwork>("%P2PNetwork");
@@ -53,13 +64,19 @@ namespace CrazySnooker.Game.Managers
          playerYou = GetNode<PoolCueController>(playerYouPath);
          playerOpponent = GetNode<PoolCueController>(playerOpponentPath);
          ballsGroup = GetNode<Spatial>(ballsGroupPath);
+
+			categoriesQtd.Add(BallCategory.HEALTHY, 0);
+			categoriesQtd.Add(BallCategory.NOT_HEALTHY, 0);
+
          if (ballsGroup != null)
          {
             foreach (Node ball in ballsGroup.GetChildren())
             {
                if (ball is GenericBall)
                {
-                  balls.Add((GenericBall)ball);
+                  GenericBall _ball = (GenericBall)ball;
+                  balls.Add(_ball);
+                  categoriesQtd[_ball.category]++;
                }
             }
          }
@@ -69,12 +86,17 @@ namespace CrazySnooker.Game.Managers
       {
          if (isHosting)
          {
-            int idTurn = playerYou.playerID;
-            playerTurnId = idTurn;
-            network.SendInitTurn(idTurn);
-            playerYou.ChangeTurn(idTurn);
-            playerOpponent.ChangeTurn(idTurn);
+            SendUpdateTurn();
          }
+      }
+
+      public void SendUpdateTurn()
+      {
+         int idTurn = playerOpponent.playerID;
+         playerTurnId = idTurn;
+         network.SendUpdateTurn(idTurn);
+         playerYou.ChangeTurn(idTurn);
+         playerOpponent.ChangeTurn(idTurn);
       }
 
       public void UpdateTurn(int id, int idTurn)
@@ -111,36 +133,115 @@ namespace CrazySnooker.Game.Managers
             linearVelocity = MathUtils.Vector3ToFloatArray(whiteBall.LinearVelocity),
             position = MathUtils.Vector3ToFloatArray(whiteBall.GlobalTransform.origin),
             orientation = MathUtils.Vector3ToFloatArray(whiteBall.GlobalTransform.basis.GetEuler()),
-				scnIdx = 0,
+            scnIdx = 0,
          };
          BallState[] _ballStates = new BallState[balls.Count + 1];
-			_ballStates[0] = whiteBallState;
+         _ballStates[0] = whiteBallState;
          for (int i = 0; i < balls.Count; i++)
          {
-				GenericBall ball = balls[i];
-				_ballStates[i + 1] = new BallState() {
-					angularVelocity = MathUtils.Vector3ToFloatArray(ball.AngularVelocity),
-					linearVelocity = MathUtils.Vector3ToFloatArray(ball.LinearVelocity),
-					position = MathUtils.Vector3ToFloatArray(ball.GlobalTransform.origin),
-					orientation = MathUtils.Vector3ToFloatArray(ball.GlobalTransform.basis.GetEuler()),
-					scnIdx = ball.GetIndex() + 1,
-				};
+            GenericBall ball = balls[i];
+            _ballStates[i + 1] = new BallState()
+            {
+               angularVelocity = MathUtils.Vector3ToFloatArray(ball.AngularVelocity),
+               linearVelocity = MathUtils.Vector3ToFloatArray(ball.LinearVelocity),
+               position = MathUtils.Vector3ToFloatArray(ball.GlobalTransform.origin),
+               orientation = MathUtils.Vector3ToFloatArray(ball.GlobalTransform.basis.GetEuler()),
+               scnIdx = ball.GetIndex() + 1,
+            };
          }
-         UpdatePackage updatePackage = new UpdatePackage() {
-				ballStates = _ballStates
-			};
-			network.SendBallsState(updatePackage);
+         UpdatePackage updatePackage = new UpdatePackage()
+         {
+            ballStates = _ballStates
+         };
+         network.SendBallsState(updatePackage);
       }
 
-		public void OnTreeExitingBall(Node node)
-		{
-			balls.Remove((GenericBall) node);
-			((GenericBall) node).exiting = true;
-		}
+      public BallCategory GetInverseBallCategory(BallCategory category)
+      {
+         switch (category)
+         {
+            case BallCategory.HEALTHY:
+               return BallCategory.NOT_HEALTHY;
+            case BallCategory.NOT_HEALTHY:
+               return BallCategory.HEALTHY;
+         }
+         return BallCategory.UNDEFINED;
+      }
+
+      public void OnTreeExitingBall(Node node)
+      {
+         GenericBall ball = (GenericBall)node;
+         balls.Remove(ball);
+         ball.exiting = true;
+         BallCategory category = ball.category;
+
+         categoriesQtd[category]--;
+
+         bool isYourTurn = playerYou.playerID == playerTurnId;
+
+         if (yourBallCategory == BallCategory.UNDEFINED || opponentBallCategory == BallCategory.UNDEFINED)
+         {
+            if (isYourTurn)
+            {
+               yourBallCategory = category;
+               opponentBallCategory = GetInverseBallCategory(category);
+            }
+            else
+            {
+               opponentBallCategory = category;
+               yourBallCategory = GetInverseBallCategory(category);
+            }
+            return;
+         }
+
+         if (category == yourBallCategory)
+         {
+				if (categoriesQtd[category] == 0) {
+					Winner();
+				} else {
+					// MAKE POINT
+				}
+         }
+			if (category == opponentBallCategory)
+         {
+				if (categoriesQtd[category] == 0) {
+					Loser();
+				} else {
+					//
+				}
+         }
+      }
+
+      public void Winner()
+      {
+			EmitSignal(nameof(WinnerEvent));
+      }
+
+      public void Loser()
+      {
+			EmitSignal(nameof(LooserEvent));
+      }
 
       public void EmitResetWhiteBall()
       {
          EmitSignal("ResetWhiteBall");
+      }
+
+      public bool AnyBallIsMoving()
+      {
+         if (whiteBall.LinearVelocity.Length() >= .02f)
+         {
+            return true;
+         }
+         for (int i = 0; i < balls.Count; i++)
+         {
+            GenericBall ball = balls[i];
+            if (ball.LinearVelocity.Length() >= .02f)
+            {
+               return true;
+            }
+         }
+         return false;
       }
    }
 }

@@ -36,6 +36,8 @@ namespace CrazySnooker.Game.Controllers
 
       private Camera camera;
 
+      private Camera outCamera;
+
       private GenericBall whiteBall;
 
       private float rotationFactor = 2f;
@@ -71,6 +73,8 @@ namespace CrazySnooker.Game.Controllers
       [Export]
       public bool isRemote = false;
 
+      public bool waintingFinishTurn = false;
+
       public override void _Ready()
       {
          gameManager = GetNode<GameManager>("%GameManager");
@@ -81,6 +85,7 @@ namespace CrazySnooker.Game.Controllers
          areaDetector = GetNode<Area>(areaDetectorPath);
          areaDetector.Connect("body_entered", this, nameof(OnWhiteBallCollide));
          camera = GetNode<Camera>(cameraPath);
+         outCamera = GetNode<Camera>("%OutCamera");
 
          projection = GetNode<Spatial>("%Projection");
          projectionMesh = projection.GetNode<MeshInstance>("Mesh");
@@ -103,21 +108,30 @@ namespace CrazySnooker.Game.Controllers
 
       public void ChangeTurn(int id)
       {
+         canShot = false;
+         if (initialPos != null) areaDetector.Translation = (Vector3) initialPos;
+
          if (id == playerID)
          {
             Visible = true;
-            if (!isRemote) camera.Current = true;
+            if (!isRemote) {
+               camera.Current = true;
+               outCamera.Current = false;
+            }
          }
          else
          {
             Visible = false;
-            if (!isRemote) camera.Current = false;
+            if (!isRemote) {
+               outCamera.Current = true;
+               camera.Current = false;
+            }
          }
       }
 
       public void OnWhiteBallCollide(Node bodyEntered)
       {
-         if (bodyEntered is WhiteBall && gameManager.isHosting)
+         if (bodyEntered is WhiteBall && gameManager.playerTurnId == playerID)
          {
             ApplyImpulse();
          }
@@ -126,16 +140,32 @@ namespace CrazySnooker.Game.Controllers
       public override void _PhysicsProcess(float delta)
       {
          if (playerID == -1) return;
-
+         
+         var forward = GlobalTransform.basis.z.Normalized();
+         GlobalTranslation = whiteBall.GlobalTransform.origin - forward * .1f;
+         
          if (gameManager.playerTurnId == playerID)
          {
-            if (Engine.GetPhysicsFrames() % 10 == 0)
+            bool whiteBallMoving = whiteBall.LinearVelocity.Length() < .02f;
+
+            if (!isRemote)
             {
-               gameManager.SendBallsPackage();
+               if (Engine.GetPhysicsFrames() % 10 == 0)
+               {
+                  gameManager.SendBallsPackage();
+                  if (waintingFinishTurn)
+                  {
+                     if (!gameManager.AnyBallIsMoving())
+                     {
+                        waintingFinishTurn = false;
+                        gameManager.SendUpdateTurn();
+                        return;
+                     }
+                  }
+               }
             }
-            var forward = GlobalTransform.basis.z.Normalized();
-            GlobalTranslation = whiteBall.GlobalTransform.origin - forward * .1f;
-            if (whiteBall.LinearVelocity.Length() < .1f)
+            
+            if (whiteBallMoving)
             {
                areaDetector.Visible = true;
                UpdateProjection();
@@ -230,7 +260,7 @@ namespace CrazySnooker.Game.Controllers
 
       public void UpdateProjection()
       {
-         if (isRemote || gameManager.playerTurnId != playerID)
+         if (isRemote || gameManager.playerTurnId != playerID || waintingFinishTurn)
          {
             UpdateProjectionVisible(false);
             return;
@@ -416,13 +446,13 @@ namespace CrazySnooker.Game.Controllers
          return null;
       }
 
-      public void Shot()
+      public async void Shot()
       {
-         if (initialPos == null) return;
+         if (initialPos == null || waintingFinishTurn) return;
          canShot = true;
          shotPos = areaDetector.Translation;
          SceneTreeTween tween = GetTree().CreateTween();
-         tween.TweenProperty(areaDetector, "translation", initialPos, .2f).SetTrans(Tween.TransitionType.Circ);
+         PropertyTweener tweener = tween.TweenProperty(areaDetector, "translation", initialPos, .2f).SetTrans(Tween.TransitionType.Circ);
       }
 
       public void ApplyImpulse()
@@ -434,6 +464,7 @@ namespace CrazySnooker.Game.Controllers
             audioManager.Play("cue_in_whiteball", null, whiteBall.GlobalTranslation);
             canShot = false;
             shotPos = null;
+            waintingFinishTurn = true;
          }
       }
    }

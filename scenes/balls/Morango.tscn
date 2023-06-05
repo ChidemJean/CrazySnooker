@@ -21,6 +21,7 @@ contact_monitor = true
 can_sleep = false
 angular_damp = 0.25
 script = ExtResource( 1 )
+category = 2
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 shape = SubResource( 3 )

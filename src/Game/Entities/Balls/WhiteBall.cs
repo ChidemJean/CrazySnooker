@@ -23,7 +23,7 @@ namespace CrazySnooker.Game.Entities.Balls
       public override void _IntegrateForces(PhysicsDirectBodyState state)
       {
          base._IntegrateForces(state);
-         if (gameManager.isHosting)
+         if (gameManager.playerYou.playerID == gameManager.playerTurnId)
          {
             if (shouldReset)
             {

@@ -71,13 +71,18 @@ spot_range = 12.0597
 spot_angle = 35.3973
 
 [node name="OutCamera" type="Camera" parent="."]
+unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 0.920805, 0.390024, 0, -0.390024, 0.920805, 0, 6.64285, 21.107 )
 environment = ExtResource( 1 )
+doppler_tracking = 1
 current = true
 fov = 50.0
 
 [node name="PoolCueYou" parent="." instance=ExtResource( 5 )]
 projectionMask = 18
+
+[node name="Camera" parent="PoolCueYou" index="1"]
+doppler_tracking = 1
 
 [node name="PoolCueOpponent" parent="." instance=ExtResource( 5 )]
 isRemote = true
@@ -262,5 +267,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
 skeleton = NodePath("../..")
 
+[editable path="PoolCueYou"]
 [editable path="ProjectionGroup/Projection"]
 [editable path="ProjectionGroup/ProjectionNext"]
