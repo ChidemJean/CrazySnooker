@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/balls/Morango.tscn" type="PackedScene" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://scenes/props/WhiteBallLimit.tscn" type="PackedScene" id=12]
 [ext_resource path="res://scenes/tables/TableCustomWalls.tscn" type="PackedScene" id=13]
 [ext_resource path="res://src/Game/Network/P2PNetwork.cs" type="Script" id=14]
+[ext_resource path="res://scenes/traps/SpiningTrap.tscn" type="PackedScene" id=15]
 
 [sub_resource type="CylinderMesh" id=8]
 top_radius = 0.01
@@ -72,11 +73,11 @@ spot_angle = 35.3973
 
 [node name="OutCamera" type="Camera" parent="."]
 unique_name_in_owner = true
-transform = Transform( 1, 0, 0, 0, 0.920805, 0.390024, 0, -0.390024, 0.920805, 0, 6.64285, 21.107 )
+transform = Transform( -4.37114e-08, -1, -4.37114e-08, 0, -4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 0, 15.952, 8.53002 )
 environment = ExtResource( 1 )
 doppler_tracking = 1
 current = true
-fov = 50.0
+fov = 35.3499
 
 [node name="PoolCueYou" parent="." instance=ExtResource( 5 )]
 projectionMask = 18
@@ -288,8 +289,15 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
 skeleton = NodePath("../..")
 
-[node name="Trap" type="RigidBody" parent="."]
-mode = 3
+[node name="SpiningTrap" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.44063, 1.99437, 3.48032 )
+
+[node name="SpiningTrap2" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0340233, 1.98954, 8.59225 )
+speed = 7.0
+
+[node name="SpiningTrap3" parent="." instance=ExtResource( 15 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.34189, 1.98954, 13.6392 )
 
 [editable path="PoolCueYou"]
 [editable path="ProjectionGroup/Projection"]

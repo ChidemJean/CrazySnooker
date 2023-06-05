@@ -303,6 +303,7 @@ namespace CrazySnooker.Game.Controllers
          Vector3 minPosCollided = Vector3.Zero;
          Vector3 minNormal = Vector3.Zero;
          Vector3 objCenter = Vector3.Zero;
+         Node curTargetProj = null;
 
          if (posTop != null)
          {
@@ -312,8 +313,9 @@ namespace CrazySnooker.Game.Controllers
             {
                minPosCollided = posT;
                minDist = distT;
-               minNormal = posTop[1];
-               objCenter = posTop[2];
+               minNormal = (Vector3) posTop[1];
+               objCenter = (Vector3) posTop[2];
+               curTargetProj = (Node) posTop[3];
             }
          }
          if (posBottom != null)
@@ -324,8 +326,9 @@ namespace CrazySnooker.Game.Controllers
             {
                minPosCollided = posB;
                minDist = distB;
-               minNormal = posBottom[1];
-               objCenter = posBottom[2];
+               minNormal = (Vector3) posBottom[1];
+               objCenter = (Vector3) posBottom[2];
+               curTargetProj = (Node) posBottom[3];
             }
          }
          if (posRight != null)
@@ -336,8 +339,9 @@ namespace CrazySnooker.Game.Controllers
             {
                minPosCollided = posR;
                minDist = distR;
-               minNormal = posRight[1];
-               objCenter = posRight[2];
+               minNormal = (Vector3) posRight[1];
+               objCenter = (Vector3) posRight[2];
+               curTargetProj = (Node) posRight[3];
             }
          }
          if (posLeft != null)
@@ -348,8 +352,9 @@ namespace CrazySnooker.Game.Controllers
             {
                minPosCollided = posL;
                minDist = distL;
-               minNormal = posLeft[1];
-               objCenter = posLeft[2];
+               minNormal = (Vector3) posLeft[1];
+               objCenter = (Vector3) posLeft[2];
+               curTargetProj = (Node) posLeft[3];
             }
          }
          if (posMiddle != null)
@@ -360,17 +365,14 @@ namespace CrazySnooker.Game.Controllers
             {
                minPosCollided = posM;
                minDist = distM;
-               minNormal = posMiddle[1];
-               objCenter = posMiddle[2];
+               minNormal = (Vector3) posMiddle[1];
+               objCenter = (Vector3) posMiddle[2];
+               curTargetProj = (Node) posMiddle[3];
             }
          }
 
          Vector3 posCollidedProj = minPosCollided + minNormal * ballRadius;
          Vector3 projectionFinalPos = whiteBallPos + (forward * posCollidedProj.DistanceTo(whiteBallPos));
-
-         // PROJECTION BALL
-         projectionBall.GlobalTranslation = projectionFinalPos;
-         projectionBall.Visible = true;
 
          // PROJECTION LINE
          var heightLine = whiteBallPos.DistanceTo(projectionFinalPos);
@@ -385,6 +387,30 @@ namespace CrazySnooker.Game.Controllers
          Vector3 meshTranslation = projectionMesh.Translation;
          meshTranslation.z = heightLine / 2;
          projectionMesh.Translation = meshTranslation;
+
+         // PROJECTION BALL
+         projectionBall.GlobalTranslation = projectionFinalPos;
+         projectionBall.Visible = true;
+
+         // PROJECTION FEEDBACK COLOR
+         SpatialMaterial ballMaterial = projectionBall.GetSurfaceMaterial(0) as SpatialMaterial;
+         SpatialMaterial lineMaterial = projectionMesh.GetSurfaceMaterial(0) as SpatialMaterial;
+         ballMaterial.AlbedoColor = new Color(1, 1, 1, .8f);
+         lineMaterial.AlbedoColor = new Color(1, 1, 1, .8f);
+
+         if (curTargetProj != null) {
+            if (curTargetProj is GenericBall && gameManager.yourBallCategory != BallCategory.UNDEFINED) {
+               if (((GenericBall)curTargetProj).category == gameManager.yourBallCategory) {
+                  ballMaterial.AlbedoColor = new Color(0, 0, 1, .8f);
+                  lineMaterial.AlbedoColor = new Color(0, 0, 1, .8f);
+               } else {
+                  ballMaterial.AlbedoColor = new Color(1, 0, 0, .8f);
+                  lineMaterial.AlbedoColor = new Color(1, 0, 0, .8f);
+               }
+            }
+         }
+
+         projectionBall.SetSurfaceMaterial(0, ballMaterial);
 
          // COLLIDED WITH ANY
          if (minDist != Mathf.Inf)
@@ -427,7 +453,7 @@ namespace CrazySnooker.Game.Controllers
          }
       }
 
-      public Vector3[] CheckProjectionUnit(Godot.Collections.Dictionary result, Spatial miniBall, Vector3 from)
+      public object[] CheckProjectionUnit(Godot.Collections.Dictionary result, Spatial miniBall, Vector3 from)
       {
          bool hasCollision = result != null && result.Contains("collider");
          miniBall.Visible = hasCollision;
@@ -441,7 +467,7 @@ namespace CrazySnooker.Game.Controllers
             {
                miniBall.GlobalTranslation = position;
             }
-            return new Vector3[] { position, normal, objCenter };
+            return new object[] { position, normal, objCenter, collider };
          }
          return null;
       }
