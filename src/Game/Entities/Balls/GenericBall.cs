@@ -32,6 +32,9 @@ namespace CrazySnooker.Game.Entities.Balls
       [Export]
       public BallCategory category;
 
+      [Export]
+      public int id = 0;
+
       public override void _Ready()
       {
          gameManager = GetNode<GameManager>("%GameManager");

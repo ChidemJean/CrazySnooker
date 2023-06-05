@@ -18,7 +18,16 @@ namespace CrazySnooker.Game.Managers
       private delegate void WinnerEvent();
 
 		[Signal]
-      private delegate void LooserEvent();
+      private delegate void LoserEvent();
+
+		[Signal]
+      private delegate void InitCategory();
+
+		[Signal]
+      private delegate void ChangeTurnEvent();
+
+		[Signal]
+      private delegate void BallPocketed();
 
       private Vector3 predictionVec = Vector3.Zero;
       public int predictionBallIdx = -1;
@@ -97,6 +106,7 @@ namespace CrazySnooker.Game.Managers
          network.SendUpdateTurn(idTurn);
          playerYou.ChangeTurn(idTurn);
          playerOpponent.ChangeTurn(idTurn);
+			EmitSignal(nameof(ChangeTurnEvent));
       }
 
       public void UpdateTurn(int id, int idTurn)
@@ -105,6 +115,7 @@ namespace CrazySnooker.Game.Managers
          playerTurnId = idTurn;
          playerYou.ChangeTurn(idTurn);
          playerOpponent.ChangeTurn(idTurn);
+			EmitSignal(nameof(ChangeTurnEvent));
       }
 
       public void BallsPackageReceive(UpdatePackage updatePackage)
@@ -117,13 +128,25 @@ namespace CrazySnooker.Game.Managers
                whiteBall.networkState = ballState;
                continue;
             }
-            GenericBall ball = ballsGroup.GetChildOrNull<GenericBall>(ballState.scnIdx - 1);
+            GenericBall ball = GetBallById(ballState.scnIdx);
             if (ball != null)
             {
                ball.networkState = ballState;
             }
          }
       }
+
+		public GenericBall GetBallById(int id)
+		{
+			for (int i = 0; i < balls.Count; i++)
+         {
+            GenericBall ball = balls[i];
+				if (ball.id == id) {
+					return ball;
+				}
+			}
+			return null;
+		}
 
       public void SendBallsPackage()
       {
@@ -146,7 +169,7 @@ namespace CrazySnooker.Game.Managers
                linearVelocity = MathUtils.Vector3ToFloatArray(ball.LinearVelocity),
                position = MathUtils.Vector3ToFloatArray(ball.GlobalTransform.origin),
                orientation = MathUtils.Vector3ToFloatArray(ball.GlobalTransform.basis.GetEuler()),
-               scnIdx = ball.GetIndex() + 1,
+               scnIdx = ball.id,
             };
          }
          UpdatePackage updatePackage = new UpdatePackage()
@@ -175,7 +198,9 @@ namespace CrazySnooker.Game.Managers
          ball.exiting = true;
          BallCategory category = ball.category;
 
-         categoriesQtd[category]--;
+			if (categoriesQtd[category] > 0) {
+         	categoriesQtd[category]--;
+			}
 
          bool isYourTurn = playerYou.playerID == playerTurnId;
 
@@ -191,8 +216,13 @@ namespace CrazySnooker.Game.Managers
                opponentBallCategory = category;
                yourBallCategory = GetInverseBallCategory(category);
             }
+
+				EmitSignal(nameof(InitCategory));
+				EmitSignal(nameof(BallPocketed));
             return;
          }
+
+			EmitSignal(nameof(BallPocketed));
 
          if (category == yourBallCategory)
          {
@@ -219,7 +249,7 @@ namespace CrazySnooker.Game.Managers
 
       public void Loser()
       {
-			EmitSignal(nameof(LooserEvent));
+			EmitSignal(nameof(LoserEvent));
       }
 
       public void EmitResetWhiteBall()
@@ -243,5 +273,23 @@ namespace CrazySnooker.Game.Managers
          }
          return false;
       }
+
+		public string GetCategoryName(BallCategory ballCategory)
+		{
+			switch (ballCategory)
+         {
+            case BallCategory.HEALTHY:
+               return "Saudáveis";
+            case BallCategory.NOT_HEALTHY:
+               return "Não saudáveis";
+         }
+
+			return "--";
+		}
+
+		public bool IsYourTurn()
+		{
+			return playerYou.playerID == playerTurnId;
+		}
    }
 }

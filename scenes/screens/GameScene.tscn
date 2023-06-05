@@ -126,66 +126,87 @@ angular_damp = 1.0
 
 [node name="Hamburguer" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.415236, 2.15841, 4.82014 )
+id = 1
 
 [node name="Hamburguer3" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.473056, 2.15841, 4.81783 )
+id = 2
 
 [node name="Hamburguer4" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.146133, 2.15841, 5.02882 )
+id = 3
 
 [node name="Hamburguer6" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0411265, 2.15841, 5.22911 )
+id = 4
 
 [node name="Hamburguer7" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0638796, 2.15841, 5.41967 )
+id = 5
 
 [node name="Hamburguer5" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.315269, 2.15841, 5.02882 )
+id = 6
 
 [node name="Morango" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.185585, 2.15231, 4.83064 )
+id = 7
 
 [node name="Morango3" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.367214, 2.15231, 5.0148 )
+id = 8
 
 [node name="Hamburguer9" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.595067, 2.15841, 5.02882 )
+id = 9
 
 [node name="Morango6" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.266097, 2.15231, 5.22675 )
+id = 10
 
 [node name="Hamburguer10" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.479243, 2.15841, 5.22911 )
+id = 11
 
 [node name="Morango7" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.168868, 2.15231, 5.41732 )
+id = 12
 
 [node name="Hamburguer11" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.387759, 2.15841, 5.41967 )
+id = 13
 
 [node name="Morango12" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0417605, 2.15231, 5.61745 )
+id = 14
 
 [node name="Hamburguer12" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260651, 2.15841, 5.6198 )
+id = 15
 
 [node name="Hamburguer13" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.150331, 2.15841, 5.81686 )
+id = 16
 
 [node name="Morango4" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0849144, 2.15231, 5.0148 )
+id = 17
 
 [node name="Morango5" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.186933, 2.15231, 5.22048 )
+id = 18
 
 [node name="Hamburguer2" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0426765, 2.15841, 4.81551 )
+id = 19
 
 [node name="Morango2" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260735, 2.15231, 4.83064 )
+id = 20
 
 [node name="Morango8" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.685329, 2.15231, 4.83064 )
+id = 21
 
 [node name="WhiteBallLimits" type="Spatial" parent="."]
 
@@ -266,6 +287,9 @@ unique_name_in_owner = true
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
 skeleton = NodePath("../..")
+
+[node name="Trap" type="RigidBody" parent="."]
+mode = 3
 
 [editable path="PoolCueYou"]
 [editable path="ProjectionGroup/Projection"]
