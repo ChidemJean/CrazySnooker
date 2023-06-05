@@ -93,6 +93,10 @@ script = ExtResource( 8 )
 ipLabelPath = NodePath("Hud/MarginContainer/Control/Host/IP")
 hostCtnPath = NodePath("Hud/MarginContainer/Control/Host")
 enterIpPath = NodePath("Hud/MarginContainer/Control/EnterIP")
+enterIpInputPath = NodePath("Hud/MarginContainer/Control/EnterIP/VBoxContainer/EnterIPInput")
+helpBoxPath = NodePath("Hud/MarginContainer/Control/HelpBox")
+loadingPath = NodePath("Hud/MarginContainer/Control/Loading")
+waitingPath = NodePath("Hud/MarginContainer/Control/Waiting")
 
 [node name="MainMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )
@@ -118,7 +122,7 @@ anchor_bottom = 1.0
 stretch = true
 
 [node name="Viewport" type="Viewport" parent="ViewportContainer"]
-size = Vector2( 1600, 900 )
+size = Vector2( 1024, 600 )
 own_world = true
 handle_input_locally = false
 fxaa = true
@@ -150,8 +154,8 @@ custom_constants/margin_bottom = 40
 [node name="Control" type="Control" parent="Hud/MarginContainer"]
 margin_left = 40.0
 margin_top = 40.0
-margin_right = 1560.0
-margin_bottom = 860.0
+margin_right = 984.0
+margin_bottom = 560.0
 mouse_filter = 2
 
 [node name="Host" type="HBoxContainer" parent="Hud/MarginContainer/Control"]
@@ -284,6 +288,21 @@ custom_fonts/font = ExtResource( 7 )
 text = "Conectando ..."
 align = 2
 
+[node name="Waiting" type="Label" parent="Hud/MarginContainer/Control"]
+visible = false
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -132.0
+margin_top = -43.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "Esperando oponente ..."
+align = 2
+
 [node name="EnterIP" type="Panel" parent="Hud/MarginContainer/Control"]
 visible = false
 anchor_left = 0.5
@@ -320,7 +339,7 @@ custom_fonts/font = ExtResource( 7 )
 text = "Entrar na partida"
 align = 1
 
-[node name="LineEdit" type="LineEdit" parent="Hud/MarginContainer/Control/EnterIP/VBoxContainer"]
+[node name="EnterIPInput" type="LineEdit" parent="Hud/MarginContainer/Control/EnterIP/VBoxContainer"]
 margin_top = 63.0
 margin_right = 382.0
 margin_bottom = 110.0
@@ -367,8 +386,8 @@ custom_fonts/font = ExtResource( 10 )
 text = "Ocorreu um erro"
 align = 1
 
+[connection signal="button_up" from="Hud/MarginContainer/Control/EnterIP/VBoxContainer/Control/Button" to="." method="OnBtnEnterClicked"]
+
 [editable path="ViewportContainer/Viewport/GameScene"]
-[editable path="ViewportContainer/Viewport/GameScene/PoolCue"]
-[editable path="ViewportContainer/Viewport/GameScene/PoolCue2"]
 [editable path="ViewportContainer/Viewport/GameScene/ProjectionGroup/Projection"]
 [editable path="ViewportContainer/Viewport/GameScene/ProjectionGroup/ProjectionNext"]

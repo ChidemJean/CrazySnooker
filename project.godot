@@ -20,13 +20,6 @@ config/name="Crazy Snooker"
 run/main_scene="res://scenes/screens/MainScene.tscn"
 config/icon="res://icon.png"
 
-[display]
-
-window/size/width=1600
-window/size/height=900
-window/size/resizable=false
-window/size/borderless=true
-
 [editor_plugins]
 
 enabled=PoolStringArray( "res://addons/MonoCustomResourceRegistry/plugin.cfg" )

@@ -48,8 +48,8 @@ script = ExtResource( 6 )
 [node name="P2PNetwork" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource( 14 )
-playerPath = NodePath("../PoolCue")
-player2Path = NodePath("../PoolCue2")
+playerYouPath = NodePath("../PoolCueYou")
+playerOpponentPath = NodePath("../PoolCueOpponent")
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
 unique_name_in_owner = true
@@ -74,6 +74,11 @@ transform = Transform( 1, 0, 0, 0, 0.920805, 0.390024, 0, -0.390024, 0.920805, 0
 environment = ExtResource( 1 )
 current = true
 fov = 50.0
+
+[node name="PoolCueYou" parent="." instance=ExtResource( 5 )]
+
+[node name="PoolCueOpponent" parent="." instance=ExtResource( 5 )]
+isRemote = true
 
 [node name="Table" type="Spatial" parent="."]
 
@@ -102,41 +107,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.832462, 2.23913, -1.19665 )
 
 [node name="Position3D4" type="Position3D" parent="Spawn"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.960365, 2.23913, 1.18926 )
-
-[node name="PoolCue" parent="." instance=ExtResource( 5 )]
-transform = Transform( 0.999695, 0.0247113, 0, -0.0247114, 0.999695, 0, 0, 0, 1, 0, 2.54372, 10.7926 )
-visible = false
-maxDistance = 1.4
-projectionMask = 18
-
-[node name="PoolCue" parent="PoolCue" index="0"]
-transform = Transform( -4.37722e-08, -1.86265e-09, -1, -0.0933785, 0.99563, 3.72529e-09, 0.995631, 0.0933785, -4.37114e-08, 0, 0, 0 )
-
-[node name="Camera" type="Camera" parent="PoolCue"]
-transform = Transform( -1, 1.22935e-07, -1.36904e-07, 1.86265e-09, 0.991558, 0.129661, 1.51239e-07, 0.129661, -0.991558, -0.00968136, 0.957695, -4.26277 )
-environment = ExtResource( 1 )
-fov = 56.0
-size = 6.0
-near = 0.01
-far = 4482.9
-
-[node name="PoolCue2" parent="." instance=ExtResource( 5 )]
-transform = Transform( 0.999695, 0.0247113, 0, -0.0247114, 0.999695, 0, 0, 0, 1, 0, 2.54372, 10.7926 )
-visible = false
-maxDistance = 1.4
-projectionMask = 18
-isRemote = true
-
-[node name="PoolCue" parent="PoolCue2" index="0"]
-transform = Transform( -4.37722e-08, -1.86265e-09, -1, -0.0933785, 0.99563, 3.72529e-09, 0.995631, 0.0933785, -4.37114e-08, 0, 0, 0 )
-
-[node name="Camera" type="Camera" parent="PoolCue2"]
-transform = Transform( -1, 1.22935e-07, -1.36904e-07, 1.86265e-09, 0.991558, 0.129661, 1.51239e-07, 0.129661, -0.991558, -0.00968136, 0.957695, -4.26277 )
-environment = ExtResource( 1 )
-fov = 56.0
-size = 6.0
-near = 0.01
-far = 4482.9
 
 [node name="WhiteBall" parent="." instance=ExtResource( 7 )]
 unique_name_in_owner = true
@@ -308,7 +278,5 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
 skeleton = NodePath("../..")
 
-[editable path="PoolCue"]
-[editable path="PoolCue2"]
 [editable path="ProjectionGroup/Projection"]
 [editable path="ProjectionGroup/ProjectionNext"]

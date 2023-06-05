@@ -4,6 +4,9 @@ using CrazySnooker.Game.Entities.Balls;
 using CrazySnooker.Extensions;
 using CrazySnooker.Game.Managers;
 using CrazySnooker.Global;
+using CrazySnooker.Utils;
+using CrazySnooker.Game.Network;
+using CrazySnooker.Game.Network.Messages;
 
 namespace CrazySnooker.Game.Controllers
 {
@@ -27,6 +30,11 @@ namespace CrazySnooker.Game.Controllers
 
       [Export]
       private float sizeNextLineProjection = .45f;
+
+      [Export]
+      private NodePath cameraPath;
+
+      private Camera camera;
 
       private GenericBall whiteBall;
 
@@ -55,7 +63,9 @@ namespace CrazySnooker.Game.Controllers
       private MeshInstance debugBallMiddle;
       private GameManager gameManager;
       private AudioManager audioManager;
-      
+      private P2PNetwork network;
+      private MainScene mainScene;
+
       public int playerID = -1;
 
       [Export]
@@ -64,10 +74,13 @@ namespace CrazySnooker.Game.Controllers
       public override void _Ready()
       {
          gameManager = GetNode<GameManager>("%GameManager");
+         network = GetNode<P2PNetwork>("%P2PNetwork");
          audioManager = GetNode<AudioManager>("/root/MainScene/AudioManager");
+         mainScene = GetNode<MainScene>("/root/MainScene");
          whiteBall = GetNode<GenericBall>("%WhiteBall");
          areaDetector = GetNode<Area>(areaDetectorPath);
          areaDetector.Connect("body_entered", this, nameof(OnWhiteBallCollide));
+         camera = GetNode<Camera>(cameraPath);
 
          projection = GetNode<Spatial>("%Projection");
          projectionMesh = projection.GetNode<MeshInstance>("Mesh");
@@ -83,9 +96,29 @@ namespace CrazySnooker.Game.Controllers
          debugBallMiddle = GetNode<MeshInstance>("%MiniBallProjectionDebugMiddle");
       }
 
+      public void UpdateID(int id)
+      {
+         playerID = id;
+         GD.Print($"{(isRemote ? "oponente" : "você")}: entrou {id}");
+      }
+
+      public void ChangeTurn(int id)
+      {
+         if (id == playerID)
+         {
+            Visible = true;
+            if (!isRemote) camera.Current = true;
+         }
+         else
+         {
+            Visible = false;
+            if (!isRemote) camera.Current = false;
+         }
+      }
+
       public void OnWhiteBallCollide(Node bodyEntered)
       {
-         if (bodyEntered is WhiteBall)
+         if (bodyEntered is WhiteBall && network.isHosting)
          {
             ApplyImpulse();
          }
@@ -93,11 +126,21 @@ namespace CrazySnooker.Game.Controllers
 
       public override void _PhysicsProcess(float delta)
       {
-         if (playerID == -1) return;
-         
+         if (playerID == -1 || network.playerTurnId != playerID) return;
+         if (network.isHosting && Engine.GetPhysicsFrames() % 2 == 0)
+         {
+            network.SendWhiteBallState(new BallState()
+            {
+               angularVelocity = MathUtils.Vector3ToFloatArray(whiteBall.AngularVelocity),
+               linearVelocity = MathUtils.Vector3ToFloatArray(whiteBall.LinearVelocity),
+               position = MathUtils.Vector3ToFloatArray(whiteBall.GlobalTransform.origin),
+               orientation = MathUtils.Vector3ToFloatArray(whiteBall.GlobalTransform.basis.GetEuler())
+            });
+         }
+
          var forward = GlobalTransform.basis.z.Normalized();
          GlobalTranslation = whiteBall.GlobalTransform.origin - forward * .1f;
-         if (whiteBall.LinearVelocity.Length() < .1f)
+         if (whiteBall.LinearVelocity.Length() < .1f && !isRemote)
          {
             areaDetector.Visible = true;
             UpdateProjection();
@@ -118,13 +161,14 @@ namespace CrazySnooker.Game.Controllers
 
       public override void _Input(InputEvent ev)
       {
-         if (isRemote || playerID == -1) return;
+         if (isRemote || (playerID == -1 || network.playerTurnId != playerID)) return;
 
          if (ev is InputEventMouseMotion)
          {
             Vector2 rel = (ev as InputEventMouseMotion).Relative;
             float move = (rel.x / (rotationFactor)) * -1;
             RotationDegrees = new Vector3(RotationDegrees.x, RotationDegrees.y + move, RotationDegrees.z);
+            network.SendRotationCue(RotationDegrees);
          }
          if (ev is InputEventMouseButton)
          {
@@ -134,17 +178,25 @@ namespace CrazySnooker.Game.Controllers
                if (emb.ButtonIndex == (int)ButtonList.WheelUp)
                {
                   Move(1);
+                  network.SendMoveCue(1);
                }
                if (emb.ButtonIndex == (int)ButtonList.WheelDown)
                {
                   Move(-1);
+                  network.SendMoveCue(-1);
                }
                if (emb.ButtonIndex == (int)ButtonList.Left)
                {
                   Shot();
+                  network.SendShot();
                }
             }
          }
+      }
+
+      public void UpdateRotationCue(Vector3 rotation)
+      {
+         RotationDegrees = rotation;
       }
 
       public Vector3 DirectionFromInitial(Vector3 moveValue)
@@ -372,7 +424,7 @@ namespace CrazySnooker.Game.Controllers
          if (canShot)
          {
             var distanceAvg = DistanceFromInitial((Vector3)shotPos);
-            whiteBall.AddForce(GlobalTransform.basis.z.Normalized() * (maxForce * distanceAvg) * 60, new Vector3(0,0,0));
+            whiteBall.AddForce(GlobalTransform.basis.z.Normalized() * (maxForce * distanceAvg) * 60, new Vector3(0, 0, 0));
             audioManager.Play("cue_in_whiteball", null, whiteBall.GlobalTranslation);
             canShot = false;
             shotPos = null;

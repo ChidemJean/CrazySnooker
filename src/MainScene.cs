@@ -32,14 +32,22 @@ namespace CrazySnooker
         private NodePath loadingPath;
         private Label loading;
 
+        [Export]
+        private NodePath waitingPath;
+        private Label waiting;
+
         [Signal]
         public delegate void UpdateIP(string ip);
+
+        [Signal]
+        public delegate void HostServer();
+
+        [Signal]
+        public delegate void JoinServer(string ip);
 
         public enum GameState { INITIAL, STARTING_SERVER, WAITING_OPPONENT, WAITING_IP_INPUT, CONNECTING, CONNECTED }
 
         public GameState state = GameState.INITIAL;
-
-        public P2PNetwork network;
 
         public override void _Ready()
         {
@@ -47,7 +55,7 @@ namespace CrazySnooker
             hostCtn = GetNode<Control>(hostCtnPath);
             enterIp = GetNode<Control>(enterIpPath);
             loading = GetNode<Label>(loadingPath);
-            network = GetNode<P2PNetwork>("%P2PNetwork");
+            waiting = GetNode<Label>(waitingPath);
             helpBox = GetNode<Control>(helpBoxPath);
             enterIpInput = GetNode<LineEdit>(enterIpInputPath);
 
@@ -89,9 +97,11 @@ namespace CrazySnooker
 
         public void ChangeState(GameState newState)
         {
+            state = newState;
+            GD.Print(newState);
             switch (newState) {
                 case GameState.STARTING_SERVER: 
-                    network.Host();
+                    EmitSignal("HostServer");
                     helpBox.Visible = false;
                     break;
                 case GameState.WAITING_IP_INPUT: 
@@ -100,14 +110,18 @@ namespace CrazySnooker
                     break;
                 case GameState.WAITING_OPPONENT: 
                     hostCtn.Visible = true;
+                    waiting.Visible = true;
                     loading.Visible = false;
                     break;
                 case GameState.CONNECTING:
                     enterIp.Visible = false;
                     loading.Visible = true;
                     break;
-                case GameState.CONNECTED: 
+                case GameState.CONNECTED:
+                    helpBox.Visible = false;
+                    enterIp.Visible = false;
                     loading.Visible = false;
+                    waiting.Visible = false;
                     break;
             }
         }
@@ -121,9 +135,9 @@ namespace CrazySnooker
         {
             string ip = enterIpInput.Text;
             if (ip == "") {
-                network.Join();
+                EmitSignal("JoinServer", "127.0.0.1");
             } else {
-                network.Join(ip);
+                EmitSignal("JoinServer", ip);
             }
         }
     }

@@ -3,4 +3,7 @@
     <TargetFramework>net472</TargetFramework>
     <RootNamespace>CrazySnooker</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MessagePack" Version="2.5.108" />
+  </ItemGroup>
 </Project>
