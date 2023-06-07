@@ -10,7 +10,13 @@ namespace CrazySnooker.Game.Network
    public class WebSocketNetwork : Node, INetwork
    {
       [Export]
-      public string SOCKET_URL = "ws://127.0.0.1:9001";
+      public string port;
+
+      [Export]
+      public string SOCKET_HOST;
+
+      [Export]
+      public bool onLocally = true;
 
       WebSocketClient client = new WebSocketClient();
 
@@ -122,7 +128,8 @@ namespace CrazySnooker.Game.Network
 
       public void Join(string ip)
       {
-         Error err = client.ConnectToUrl(SOCKET_URL);
+         string url = $"ws://{(onLocally ? "127.0.0.1" : SOCKET_HOST)}:{port}";
+         Error err = client.ConnectToUrl(url);
          if (err != Error.Ok)
          {
             GD.Print("Unable to connect");

@@ -86,6 +86,10 @@ namespace CrazySnooker
         private NodePath opponentQtdPath;
         private Label opponentQtd;
 
+        [Export]
+        private NodePath entrarBtnPath;
+        private Button entrarBtn;
+
         public override void _Ready()
         {
             gameManager = GetNode<GameManager>(gameManagerPath);
@@ -104,10 +108,12 @@ namespace CrazySnooker
             opponentCategory = GetNode<Label>(opponentCategoryPath);
             youQtd = GetNode<Label>(youQtdPath);
             opponentQtd = GetNode<Label>(opponentQtdPath);
+            entrarBtn = GetNode<Button>(entrarBtnPath);
 
             Input.MouseMode = Input.MouseModeEnum.Visible;
             
             Connect("UpdateIP", this, nameof(OnUpdateIP));
+            entrarBtn.Connect("button_up", this, nameof(OnEntrarClick));
             gameManager.Connect("WinnerEvent", this, nameof(OnWin));
             gameManager.Connect("LoserEvent", this, nameof(OnLose));
             gameManager.Connect("InitCategory", this, nameof(OnInitCategory));
@@ -150,10 +156,14 @@ namespace CrazySnooker
             }
         }
 
+        public void OnEntrarClick()
+        {
+            ChangeState(GameState.JOIN_SERVER);
+        }
+
         public void ChangeState(GameState newState)
         {
             state = newState;
-            GD.Print(newState);
             switch (newState) {
                 case GameState.STARTING_SERVER: 
                     EmitSignal("HostServer");

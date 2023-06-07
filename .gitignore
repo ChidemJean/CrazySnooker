@@ -2,4 +2,6 @@
 /.import/
 /.mono/
 /android/
+/build/
+/*.keystore
 /assets/models/prototype/

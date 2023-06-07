@@ -52,7 +52,9 @@ playerOpponentPath = NodePath("../PoolCueOpponent")
 [node name="Network" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource( 14 )
-SOCKET_URL = "ws://187.1.139.40:21106"
+port = "21106"
+SOCKET_HOST = "187.1.139.40"
+onLocally = false
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
 unique_name_in_owner = true
