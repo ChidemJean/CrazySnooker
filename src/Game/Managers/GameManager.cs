@@ -59,7 +59,7 @@ namespace CrazySnooker.Game.Managers
       public PoolCueController playerOpponent;
 
       public WhiteBall whiteBall;
-      public P2PNetwork network;
+      public INetwork network;
 
       public BallCategory yourBallCategory = BallCategory.UNDEFINED;
       public BallCategory opponentBallCategory = BallCategory.UNDEFINED;
@@ -68,7 +68,7 @@ namespace CrazySnooker.Game.Managers
 
       public override void _Ready()
       {
-         network = GetNode<P2PNetwork>("%P2PNetwork");
+         network = GetNode<INetwork>("%Network");
          whiteBall = GetNode<WhiteBall>("%WhiteBall");
          playerYou = GetNode<PoolCueController>(playerYouPath);
          playerOpponent = GetNode<PoolCueController>(playerOpponentPath);
@@ -109,9 +109,9 @@ namespace CrazySnooker.Game.Managers
 			EmitSignal(nameof(ChangeTurnEvent));
       }
 
-      public void UpdateTurn(int id, int idTurn)
+      public void UpdateTurn(int idTurn)
       {
-         GD.Print($"{id}: turno passou para {idTurn}");
+         GD.Print($"Turno passou para {idTurn}");
          playerTurnId = idTurn;
          playerYou.ChangeTurn(idTurn);
          playerOpponent.ChangeTurn(idTurn);

@@ -13,7 +13,7 @@
 [ext_resource path="res://models/arrow.glb" type="PackedScene" id=11]
 [ext_resource path="res://scenes/props/WhiteBallLimit.tscn" type="PackedScene" id=12]
 [ext_resource path="res://scenes/tables/TableCustomWalls.tscn" type="PackedScene" id=13]
-[ext_resource path="res://src/Game/Network/P2PNetwork.cs" type="Script" id=14]
+[ext_resource path="res://src/Game/Network/WebSocketNetwork.cs" type="Script" id=14]
 [ext_resource path="res://scenes/traps/SpiningTrap.tscn" type="PackedScene" id=15]
 
 [sub_resource type="CylinderMesh" id=8]
@@ -49,9 +49,10 @@ ballsGroupPath = NodePath("../BallsGroup")
 playerYouPath = NodePath("../PoolCueYou")
 playerOpponentPath = NodePath("../PoolCueOpponent")
 
-[node name="P2PNetwork" type="Node" parent="."]
+[node name="Network" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource( 14 )
+SOCKET_URL = "ws://187.1.139.40:21106"
 
 [node name="HTTPRequest" type="HTTPRequest" parent="."]
 unique_name_in_owner = true
@@ -289,15 +290,13 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.55594 )
 visible = false
 skeleton = NodePath("../..")
 
-[node name="SpiningTrap" parent="." instance=ExtResource( 15 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.44063, 1.99437, 3.48032 )
-
 [node name="SpiningTrap2" parent="." instance=ExtResource( 15 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0340233, 1.98954, 8.59225 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.99122, 1.98954, 8.59225 )
 speed = 7.0
 
 [node name="SpiningTrap3" parent="." instance=ExtResource( 15 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.34189, 1.98954, 13.6392 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.89075, 1.98954, 8.59225 )
+speed = 7.0
 
 [editable path="PoolCueYou"]
 [editable path="ProjectionGroup/Projection"]

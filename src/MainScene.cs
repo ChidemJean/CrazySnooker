@@ -46,7 +46,7 @@ namespace CrazySnooker
         [Signal]
         public delegate void JoinServer(string ip);
 
-        public enum GameState { INITIAL, STARTING_SERVER, WAITING_OPPONENT, WAITING_IP_INPUT, CONNECTING, CONNECTED }
+        public enum GameState { INITIAL, STARTING_SERVER, JOIN_SERVER, WAITING_OPPONENT, WAITING_IP_INPUT, CONNECTING, CONNECTED }
 
         public GameState state = GameState.INITIAL;
 
@@ -142,6 +142,9 @@ namespace CrazySnooker
                         if (eventKey.Scancode == (uint) KeyList.J) {
                             ChangeState(GameState.WAITING_IP_INPUT);
                         }
+                        if (eventKey.Scancode == (uint) KeyList.E) {
+                            ChangeState(GameState.JOIN_SERVER);
+                        }
                     }
                 }
             }
@@ -160,13 +163,24 @@ namespace CrazySnooker
                     loading.Visible = false;
                     enterIp.Visible = true;
                     break;
+                case GameState.JOIN_SERVER: 
+                    EmitSignal("JoinServer", "");
+                    enterIp.Visible = false;
+                    loading.Visible = true;
+                    hostCtn.Visible = false;
+                    helpBox.Visible = false;
+                    waiting.Visible = false;
+                    break;
                 case GameState.WAITING_OPPONENT: 
-                    hostCtn.Visible = true;
+                    hostCtn.Visible = false;
+                    helpBox.Visible = false;
                     waiting.Visible = true;
                     loading.Visible = false;
                     break;
                 case GameState.CONNECTING:
-                    enterIp.Visible = false;
+                    hostCtn.Visible = false;
+                    helpBox.Visible = false;
+                    waiting.Visible = false;
                     loading.Visible = true;
                     break;
                 case GameState.CONNECTED:

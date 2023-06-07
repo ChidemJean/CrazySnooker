@@ -65,7 +65,7 @@ namespace CrazySnooker.Game.Controllers
       private MeshInstance debugBallMiddle;
       private GameManager gameManager;
       private AudioManager audioManager;
-      private P2PNetwork network;
+      private INetwork network;
       private MainScene mainScene;
 
       public int playerID = -1;
@@ -78,7 +78,7 @@ namespace CrazySnooker.Game.Controllers
       public override void _Ready()
       {
          gameManager = GetNode<GameManager>("%GameManager");
-         network = GetNode<P2PNetwork>("%P2PNetwork");
+         network = GetNode<INetwork>("%Network");
          audioManager = GetNode<AudioManager>("/root/MainScene/AudioManager");
          mainScene = GetNode<MainScene>("/root/MainScene");
          whiteBall = GetNode<GenericBall>("%WhiteBall");

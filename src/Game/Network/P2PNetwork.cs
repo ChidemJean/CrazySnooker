@@ -9,7 +9,7 @@ using MessagePack;
 
 namespace CrazySnooker.Game.Network
 {
-   public class P2PNetwork : Node
+   public class P2PNetwork : Node, INetwork
    {
       [Export]
       private int HOST_PORT = 61535;
@@ -119,7 +119,7 @@ namespace CrazySnooker.Game.Network
       [Remote]
       public async void ReceiveUpdateTurn(int id, int idTurn)
       {
-			gameManager.UpdateTurn(id, idTurn);
+			gameManager.UpdateTurn(idTurn);
       }
 
       public void SendRotationCue(Vector3 rotation)

@@ -26,7 +26,7 @@ namespace CrazySnooker.Game.Entities.Balls
       protected GameManager gameManager;
 
       public BallState networkState = null;
-      P2PNetwork network;
+      INetwork network;
       public bool exiting = false;
 
       [Export]
@@ -41,7 +41,7 @@ namespace CrazySnooker.Game.Entities.Balls
          Connect("tree_exiting", gameManager, "OnTreeExitingBall", new Godot.Collections.Array() { this });
          audioManager = GetNode<AudioManager>("/root/MainScene/AudioManager");
          if (meshPath != null) mesh = GetNode<MeshInstance>(meshPath);
-         network = GetNode<P2PNetwork>("%P2PNetwork");
+         network = GetNode<INetwork>("%Network");
          Connect("body_entered", this, nameof(OnBallEntered));
       }
 

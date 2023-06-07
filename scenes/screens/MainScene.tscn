@@ -93,8 +93,8 @@ expand_margin_bottom = 5.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 8 )
-ipLabelPath = NodePath("Hud/MarginContainer/Control/Host/IP")
-hostCtnPath = NodePath("Hud/MarginContainer/Control/Host")
+ipLabelPath = NodePath("Hud/MarginContainer/Control/HostP2P/IP")
+hostCtnPath = NodePath("Hud/MarginContainer/Control/HostP2P")
 enterIpPath = NodePath("Hud/MarginContainer/Control/EnterIP")
 enterIpInputPath = NodePath("Hud/MarginContainer/Control/EnterIP/VBoxContainer/EnterIPInput")
 helpBoxPath = NodePath("Hud/MarginContainer/Control/HelpBox")
@@ -170,7 +170,7 @@ margin_right = 984.0
 margin_bottom = 560.0
 mouse_filter = 2
 
-[node name="Host" type="HBoxContainer" parent="Hud/MarginContainer/Control"]
+[node name="HostP2P" type="HBoxContainer" parent="Hud/MarginContainer/Control"]
 visible = false
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -178,7 +178,7 @@ margin_top = -43.0
 margin_right = 40.0
 custom_constants/separation = 20
 
-[node name="Host" type="Label" parent="Hud/MarginContainer/Control/Host"]
+[node name="Host" type="Label" parent="Hud/MarginContainer/Control/HostP2P"]
 material = ExtResource( 9 )
 margin_right = 87.0
 margin_bottom = 43.0
@@ -187,7 +187,7 @@ custom_constants/shadow_offset_y = 4
 custom_fonts/font = ExtResource( 7 )
 text = "Hosting"
 
-[node name="IP" type="Label" parent="Hud/MarginContainer/Control/Host"]
+[node name="IP" type="Label" parent="Hud/MarginContainer/Control/HostP2P"]
 margin_left = 107.0
 margin_right = 198.0
 margin_bottom = 43.0
@@ -196,7 +196,8 @@ custom_constants/shadow_offset_y = 4
 custom_fonts/font = ExtResource( 7 )
 text = "127.0.0.1"
 
-[node name="HelpBox" type="VBoxContainer" parent="Hud/MarginContainer/Control"]
+[node name="HelpBoxP2P" type="VBoxContainer" parent="Hud/MarginContainer/Control"]
+visible = false
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -206,7 +207,7 @@ margin_top = -90.0
 custom_constants/separation = -14
 alignment = 2
 
-[node name="HostHelp" type="HBoxContainer" parent="Hud/MarginContainer/Control/HelpBox"]
+[node name="HostHelp" type="HBoxContainer" parent="Hud/MarginContainer/Control/HelpBoxP2P"]
 margin_top = 18.0
 margin_right = 218.0
 margin_bottom = 61.0
@@ -214,7 +215,7 @@ grow_horizontal = 0
 custom_constants/separation = 10
 alignment = 2
 
-[node name="Msg" type="Label" parent="Hud/MarginContainer/Control/HelpBox/HostHelp"]
+[node name="Msg" type="Label" parent="Hud/MarginContainer/Control/HelpBoxP2P/HostHelp"]
 margin_left = 59.0
 margin_top = 7.0
 margin_right = 109.0
@@ -226,7 +227,7 @@ custom_fonts/font = ExtResource( 13 )
 text = "Aperte"
 align = 2
 
-[node name="H" type="Label" parent="Hud/MarginContainer/Control/HelpBox/HostHelp"]
+[node name="H" type="Label" parent="Hud/MarginContainer/Control/HelpBoxP2P/HostHelp"]
 material = ExtResource( 9 )
 margin_left = 119.0
 margin_right = 135.0
@@ -236,7 +237,7 @@ custom_constants/shadow_offset_y = 4
 custom_fonts/font = ExtResource( 7 )
 text = "H"
 
-[node name="Msg2" type="Label" parent="Hud/MarginContainer/Control/HelpBox/HostHelp"]
+[node name="Msg2" type="Label" parent="Hud/MarginContainer/Control/HelpBoxP2P/HostHelp"]
 margin_left = 145.0
 margin_top = 7.0
 margin_right = 218.0
@@ -248,7 +249,7 @@ custom_fonts/font = ExtResource( 13 )
 text = "para criar"
 align = 2
 
-[node name="JoinHelp" type="HBoxContainer" parent="Hud/MarginContainer/Control/HelpBox"]
+[node name="JoinHelp" type="HBoxContainer" parent="Hud/MarginContainer/Control/HelpBoxP2P"]
 margin_top = 47.0
 margin_right = 218.0
 margin_bottom = 90.0
@@ -256,7 +257,7 @@ grow_horizontal = 0
 custom_constants/separation = 10
 alignment = 2
 
-[node name="Msg" type="Label" parent="Hud/MarginContainer/Control/HelpBox/JoinHelp"]
+[node name="Msg" type="Label" parent="Hud/MarginContainer/Control/HelpBoxP2P/JoinHelp"]
 margin_left = 54.0
 margin_top = 7.0
 margin_right = 104.0
@@ -268,7 +269,7 @@ custom_fonts/font = ExtResource( 13 )
 text = "Aperte"
 align = 2
 
-[node name="J" type="Label" parent="Hud/MarginContainer/Control/HelpBox/JoinHelp"]
+[node name="J" type="Label" parent="Hud/MarginContainer/Control/HelpBoxP2P/JoinHelp"]
 material = ExtResource( 9 )
 margin_left = 114.0
 margin_right = 124.0
@@ -277,6 +278,58 @@ custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_y = 4
 custom_fonts/font = ExtResource( 7 )
 text = "J"
+
+[node name="Msg2" type="Label" parent="Hud/MarginContainer/Control/HelpBoxP2P/JoinHelp"]
+margin_left = 134.0
+margin_top = 7.0
+margin_right = 218.0
+margin_bottom = 35.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 13 )
+text = "para entrar"
+align = 2
+
+[node name="HelpBox" type="VBoxContainer" parent="Hud/MarginContainer/Control"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -218.0
+margin_top = -90.0
+custom_constants/separation = -14
+alignment = 2
+
+[node name="JoinHelp" type="HBoxContainer" parent="Hud/MarginContainer/Control/HelpBox"]
+margin_top = 47.0
+margin_right = 218.0
+margin_bottom = 90.0
+grow_horizontal = 0
+custom_constants/separation = 10
+alignment = 2
+
+[node name="Msg" type="Label" parent="Hud/MarginContainer/Control/HelpBox/JoinHelp"]
+margin_left = 51.0
+margin_top = 7.0
+margin_right = 101.0
+margin_bottom = 35.0
+grow_horizontal = 0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 13 )
+text = "Aperte"
+align = 2
+
+[node name="E" type="Label" parent="Hud/MarginContainer/Control/HelpBox/JoinHelp"]
+material = ExtResource( 9 )
+margin_left = 111.0
+margin_right = 124.0
+margin_bottom = 43.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_y = 4
+custom_fonts/font = ExtResource( 7 )
+text = "E"
 
 [node name="Msg2" type="Label" parent="Hud/MarginContainer/Control/HelpBox/JoinHelp"]
 margin_left = 134.0
