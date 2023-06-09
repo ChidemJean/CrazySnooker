@@ -4,15 +4,16 @@ importer="texture"
 type="StreamTexture"
 path.s3tc="res://.import/bread_up.jpg-dc04f754bc93fcb438bd93ac5ceae03a.s3tc.stex"
 path.etc2="res://.import/bread_up.jpg-dc04f754bc93fcb438bd93ac5ceae03a.etc2.stex"
+path.etc="res://.import/bread_up.jpg-dc04f754bc93fcb438bd93ac5ceae03a.etc.stex"
 metadata={
-"imported_formats": [ "s3tc", "etc2" ],
+"imported_formats": [ "s3tc", "etc2", "etc" ],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://models/food/hamburguer/bread_up.jpg"
-dest_files=[ "res://.import/bread_up.jpg-dc04f754bc93fcb438bd93ac5ceae03a.s3tc.stex", "res://.import/bread_up.jpg-dc04f754bc93fcb438bd93ac5ceae03a.etc2.stex" ]
+dest_files=[ "res://.import/bread_up.jpg-dc04f754bc93fcb438bd93ac5ceae03a.s3tc.stex", "res://.import/bread_up.jpg-dc04f754bc93fcb438bd93ac5ceae03a.etc2.stex", "res://.import/bread_up.jpg-dc04f754bc93fcb438bd93ac5ceae03a.etc.stex" ]
 
 [params]
 

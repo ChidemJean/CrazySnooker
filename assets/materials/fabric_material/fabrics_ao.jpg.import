@@ -4,15 +4,16 @@ importer="texture"
 type="StreamTexture"
 path.s3tc="res://.import/fabrics_ao.jpg-ce478b9179cf41d1d77f4d95b0225baf.s3tc.stex"
 path.etc2="res://.import/fabrics_ao.jpg-ce478b9179cf41d1d77f4d95b0225baf.etc2.stex"
+path.etc="res://.import/fabrics_ao.jpg-ce478b9179cf41d1d77f4d95b0225baf.etc.stex"
 metadata={
-"imported_formats": [ "s3tc", "etc2" ],
+"imported_formats": [ "s3tc", "etc2", "etc" ],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/materials/fabric_material/fabrics_ao.jpg"
-dest_files=[ "res://.import/fabrics_ao.jpg-ce478b9179cf41d1d77f4d95b0225baf.s3tc.stex", "res://.import/fabrics_ao.jpg-ce478b9179cf41d1d77f4d95b0225baf.etc2.stex" ]
+dest_files=[ "res://.import/fabrics_ao.jpg-ce478b9179cf41d1d77f4d95b0225baf.s3tc.stex", "res://.import/fabrics_ao.jpg-ce478b9179cf41d1d77f4d95b0225baf.etc2.stex", "res://.import/fabrics_ao.jpg-ce478b9179cf41d1d77f4d95b0225baf.etc.stex" ]
 
 [params]
 

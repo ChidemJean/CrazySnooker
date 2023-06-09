@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/balls/Morango.tscn" type="PackedScene" id=2]
@@ -11,10 +11,13 @@
 [ext_resource path="res://scenes/debug/MiniBallProjectionDebug.tscn" type="PackedScene" id=9]
 [ext_resource path="res://scenes/tables/TableCustom.tscn" type="PackedScene" id=10]
 [ext_resource path="res://models/arrow.glb" type="PackedScene" id=11]
-[ext_resource path="res://scenes/props/WhiteBallLimit.tscn" type="PackedScene" id=12]
+[ext_resource path="res://src/Game/CameraShake.cs" type="Script" id=12]
 [ext_resource path="res://scenes/tables/TableCustomWalls.tscn" type="PackedScene" id=13]
 [ext_resource path="res://src/Game/Network/WebSocketNetwork.cs" type="Script" id=14]
 [ext_resource path="res://scenes/traps/SpiningTrap.tscn" type="PackedScene" id=15]
+[ext_resource path="res://src/Game/OutCamera.cs" type="Script" id=16]
+[ext_resource path="res://scenes/characters/FirstCreature.tscn" type="PackedScene" id=17]
+[ext_resource path="res://scenes/particles/ExplosionParticles.tscn" type="PackedScene" id=18]
 
 [sub_resource type="CylinderMesh" id=8]
 top_radius = 0.01
@@ -48,6 +51,9 @@ script = ExtResource( 6 )
 ballsGroupPath = NodePath("../BallsGroup")
 playerYouPath = NodePath("../PoolCueYou")
 playerOpponentPath = NodePath("../PoolCueOpponent")
+particles = {
+"explosion": ExtResource( 18 )
+}
 
 [node name="Network" type="Node" parent="."]
 unique_name_in_owner = true
@@ -61,26 +67,30 @@ unique_name_in_owner = true
 use_threads = true
 
 [node name="SpotLight" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, -0.679787, 0.73341, 0, -0.73341, -0.679787, 0, 7.93534, 0 )
+transform = Transform( 1, 0, 0, 0, -0.679787, 0.73341, 0, -0.73341, -0.679787, 0, 7.6207, -2.40365 )
 light_energy = 3.0
 shadow_enabled = true
-spot_range = 12.4579
-spot_angle = 28.9402
+spot_range = 13.6017
+spot_angle = 51.6657
 
 [node name="SpotLight2" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.532729, 0.846286, 0, -0.846286, 0.532729, 0, 7.93534, 16.0858 )
+transform = Transform( 1, 0, 0, 0, 0.672122, 0.740441, 0, -0.740441, 0.672122, 0, 8.09703, 19.2128 )
 light_energy = 3.0
 shadow_enabled = true
-spot_range = 12.0597
-spot_angle = 35.3973
+spot_range = 18.6645
+spot_angle = 42.3873
 
 [node name="OutCamera" type="Camera" parent="."]
 unique_name_in_owner = true
-transform = Transform( -4.37114e-08, -1, -4.37114e-08, 0, -4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 0, 15.952, 8.53002 )
+transform = Transform( -4.37114e-08, -1, -4.37114e-08, 0, -4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 0, 16, 8.53 )
 environment = ExtResource( 1 )
 doppler_tracking = 1
 current = true
 fov = 35.3499
+script = ExtResource( 16 )
+
+[node name="Shake" type="Node" parent="OutCamera"]
+script = ExtResource( 12 )
 
 [node name="PoolCueYou" parent="." instance=ExtResource( 5 )]
 projectionMask = 18
@@ -212,26 +222,6 @@ id = 20
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.685329, 2.15231, 4.83064 )
 id = 21
 
-[node name="WhiteBallLimits" type="Spatial" parent="."]
-
-[node name="WhiteBallLimit" parent="WhiteBallLimits" instance=ExtResource( 12 )]
-transform = Transform( 0.715473, 0, 0.69864, 0, 1, 0, -0.69864, 0, 0.715473, 4.31074, 2.18308, 1.63473 )
-
-[node name="WhiteBallLimit2" parent="WhiteBallLimits" instance=ExtResource( 12 )]
-transform = Transform( 0.715473, 0, -0.69864, 0, 1, 0, 0.69864, 0, 0.715473, -4.08452, 2.18308, 1.85527 )
-
-[node name="WhiteBallLimit3" parent="WhiteBallLimits" instance=ExtResource( 12 )]
-transform = Transform( 0.715473, 0, -0.69864, 0, 1, 0, 0.69864, 0, 0.715473, 4.462, 2.18308, 15.3233 )
-
-[node name="WhiteBallLimit4" parent="WhiteBallLimits" instance=ExtResource( 12 )]
-transform = Transform( 0.715473, 0, 0.69864, 0, 1, 0, -0.69864, 0, 0.715473, -4.223, 2.18308, 15.109 )
-
-[node name="WhiteBallLimit5" parent="WhiteBallLimits" instance=ExtResource( 12 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5123, 2.18308, 8.44318 )
-
-[node name="WhiteBallLimit6" parent="WhiteBallLimits" instance=ExtResource( 12 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 3.80966, 2.18308, 8.44318 )
-
 [node name="ProjectionGroup" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.989856, 0 )
 
@@ -293,12 +283,30 @@ visible = false
 skeleton = NodePath("../..")
 
 [node name="SpiningTrap2" parent="." instance=ExtResource( 15 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.99122, 1.98954, 8.59225 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.99122, 2.08898, 8.59225 )
 speed = 7.0
 
 [node name="SpiningTrap3" parent="." instance=ExtResource( 15 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.89075, 1.98954, 8.59225 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.89075, 2.08898, 8.59225 )
 speed = 7.0
+
+[node name="FristCreature" parent="." instance=ExtResource( 17 )]
+transform = Transform( 0.77188, 0, 0.635768, 0, 1, 0, -0.635768, 0, 0.77188, 4.12811, 2.09804, 15.2452 )
+
+[node name="FristCreature2" parent="." instance=ExtResource( 17 )]
+transform = Transform( 0.739255, 0, -0.673425, 0, 1, 0, 0.673425, 0, 0.739255, -4.27, 2.09804, 15.2045 )
+
+[node name="FristCreature3" parent="." instance=ExtResource( 17 )]
+transform = Transform( -0.71713, 0, 0.69694, 0, 1, 0, -0.69694, 0, -0.71713, 4.26307, 2.07504, 1.96167 )
+
+[node name="FristCreature4" parent="." instance=ExtResource( 17 )]
+transform = Transform( -0.660172, 0, -0.751114, 0, 1, 0, 0.751114, 0, -0.660172, -4.19035, 2.09804, 1.86268 )
+
+[node name="FristCreature5" parent="." instance=ExtResource( 17 )]
+transform = Transform( -0.0275377, 0, -0.999621, 0, 1, 0, 0.999621, 0, -0.0275377, -3.41097, 2.07895, 8.49148 )
+
+[node name="FristCreature6" parent="." instance=ExtResource( 17 )]
+transform = Transform( -0.0168243, 0, 0.999858, 0, 1, 0, -0.999858, 0, -0.0168243, 3.4065, 2.11026, 8.62234 )
 
 [editable path="PoolCueYou"]
 [editable path="ProjectionGroup/Projection"]

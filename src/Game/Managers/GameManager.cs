@@ -6,6 +6,7 @@ using CrazySnooker.Game.Controllers;
 using CrazySnooker.Game.Network;
 using CrazySnooker.Utils;
 using CrazySnooker.Game.Network.Messages;
+using CrazySnooker.Game.Particles;
 
 namespace CrazySnooker.Game.Managers
 {
@@ -54,6 +55,9 @@ namespace CrazySnooker.Game.Managers
 
       [Export]
       private NodePath playerOpponentPath;
+
+      [Export]
+      private Godot.Collections.Dictionary<string, PackedScene> particles = new Godot.Collections.Dictionary<string, PackedScene>();
 
       public PoolCueController playerYou;
       public PoolCueController playerOpponent;
@@ -198,6 +202,8 @@ namespace CrazySnooker.Game.Managers
          ball.exiting = true;
          BallCategory category = ball.category;
 
+         if (!categoriesQtd.ContainsKey(category)) return;
+
 			if (categoriesQtd[category] > 0) {
          	categoriesQtd[category]--;
 			}
@@ -291,5 +297,14 @@ namespace CrazySnooker.Game.Managers
 		{
 			return playerYou.playerID == playerTurnId;
 		}
+
+      public void EmitParticleInPosition(string particleKey, Vector3 position)
+      {
+         PackedScene scn = particles[particleKey];
+         MultiParticles particlesNode = scn.Instance<MultiParticles>();
+         GetParent().AddChild(particlesNode);
+         particlesNode.GlobalTranslation = position;
+         particlesNode.Play();
+      }
    }
 }

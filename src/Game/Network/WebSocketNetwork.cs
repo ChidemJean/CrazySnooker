@@ -59,7 +59,7 @@ namespace CrazySnooker.Game.Network
 
       public void OnConnectionClosed(bool wasClean = false)
       {
-         GD.Print($"Closed, clead: {wasClean}");
+         GD.Print($"Closed, clead {wasClean}");
          SetProcess(false);
       }
 
@@ -71,7 +71,7 @@ namespace CrazySnooker.Game.Network
 
       public void OnConnected(string proto = "")
       {
-         GD.Print($"Connected with protocol: {proto}");
+         GD.Print($"Connected with protocol {proto}");
          isConnected = true;
          mainScene.ChangeState(MainScene.GameState.WAITING_OPPONENT);
       }

@@ -176,8 +176,8 @@ namespace CrazySnooker.Global
                 object stream = queuedAudio.obj;
                 Vector3 position = (Vector3) queuedAudio.position;
                 AudioStreamPlayer3D player = available3D.Dequeue();
-                player.GlobalTranslation = position;
                 player.Stream = (stream is string) ? ResourceLoader.Load<AudioStream>((string) stream) : (AudioStream) stream;
+                player.GlobalTranslation = position;
                 player.Play();
             }
         }

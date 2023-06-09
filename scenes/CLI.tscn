@@ -1,0 +1,86 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/fonts/baloom_small.tres" type="DynamicFont" id=1]
+[ext_resource path="res://assets/materials/ui/BlurWithColor.tres" type="Material" id=2]
+[ext_resource path="res://src/Debug/CLI.cs" type="Script" id=4]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+content_margin_left = 45.0
+content_margin_right = 45.0
+content_margin_top = 5.0
+content_margin_bottom = 5.0
+
+[node name="CLI" type="VBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 6.0
+margin_top = -1930.0
+margin_right = 6.0
+margin_bottom = -1930.0
+script = ExtResource( 4 )
+cmdLabelPath = NodePath("CMDS/MarginContainer/VBoxContainer/Label")
+inputPath = NodePath("InputBg/MarginContainer/Input")
+closePath = NodePath("CMDS/TextureButton")
+
+[node name="CMDS" type="ColorRect" parent="."]
+material = ExtResource( 2 )
+margin_right = 1024.0
+margin_bottom = 476.0
+size_flags_vertical = 3
+color = Color( 0, 0, 0, 1 )
+
+[node name="TextureButton" type="TextureRect" parent="CMDS"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -105.0
+margin_top = 20.0
+margin_right = -25.0
+margin_bottom = 100.0
+mouse_filter = 0
+expand = true
+stretch_mode = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="CMDS"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 30
+custom_constants/margin_top = 30
+custom_constants/margin_left = 30
+custom_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CMDS/MarginContainer"]
+margin_left = 30.0
+margin_top = 30.0
+margin_right = 994.0
+margin_bottom = 466.0
+
+[node name="Label" type="Label" parent="CMDS/MarginContainer/VBoxContainer"]
+margin_right = 964.0
+margin_bottom = 28.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "--- CLI Chidem Games ---"
+
+[node name="InputBg" type="ColorRect" parent="."]
+margin_top = 480.0
+margin_right = 1024.0
+margin_bottom = 600.0
+rect_min_size = Vector2( 0, 120 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="MarginContainer" type="MarginContainer" parent="InputBg"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 5
+custom_constants/margin_top = 5
+custom_constants/margin_left = 5
+custom_constants/margin_bottom = 5
+
+[node name="Input" type="LineEdit" parent="InputBg/MarginContainer"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 1019.0
+margin_bottom = 115.0
+custom_fonts/font = ExtResource( 1 )
+custom_styles/normal = SubResource( 1 )
+placeholder_text = "Digite o comando aqui"

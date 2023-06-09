@@ -4,15 +4,16 @@ importer="texture"
 type="StreamTexture"
 path.s3tc="res://.import/fabrics_roughness.jpg-17941e83da0aa49f3ca82d4379e85b41.s3tc.stex"
 path.etc2="res://.import/fabrics_roughness.jpg-17941e83da0aa49f3ca82d4379e85b41.etc2.stex"
+path.etc="res://.import/fabrics_roughness.jpg-17941e83da0aa49f3ca82d4379e85b41.etc.stex"
 metadata={
-"imported_formats": [ "s3tc", "etc2" ],
+"imported_formats": [ "s3tc", "etc2", "etc" ],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/materials/fabric_material/fabrics_roughness.jpg"
-dest_files=[ "res://.import/fabrics_roughness.jpg-17941e83da0aa49f3ca82d4379e85b41.s3tc.stex", "res://.import/fabrics_roughness.jpg-17941e83da0aa49f3ca82d4379e85b41.etc2.stex" ]
+dest_files=[ "res://.import/fabrics_roughness.jpg-17941e83da0aa49f3ca82d4379e85b41.s3tc.stex", "res://.import/fabrics_roughness.jpg-17941e83da0aa49f3ca82d4379e85b41.etc2.stex", "res://.import/fabrics_roughness.jpg-17941e83da0aa49f3ca82d4379e85b41.etc.stex" ]
 
 [params]
 

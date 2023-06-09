@@ -1,0 +1,118 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://src/Game/Particles/MultiParticles.cs" type="Script" id=1]
+[ext_resource path="res://assets/kenney/kenney_splat-pack/PNG/Default (256px)/splat12.png" type="Texture" id=2]
+
+[sub_resource type="SpatialMaterial" id=8]
+flags_transparent = true
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+vertex_color_use_as_albedo = true
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_texture = ExtResource( 2 )
+
+[sub_resource type="Gradient" id=9]
+offsets = PoolRealArray( 0.0744681, 0.18617, 0.248344, 0.456954, 0.701987, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 1, 0.638672, 0, 1, 0.858824, 0.427451, 0, 1, 0.109375, 0.109375, 0.109375, 1, 0.0810547, 0.0810547, 0.0810547, 1, 0.242676, 0.242676, 0.242676, 0 )
+
+[sub_resource type="GradientTexture" id=10]
+gradient = SubResource( 9 )
+
+[sub_resource type="Curve" id=3]
+_data = [ Vector2( 0, 1 ), 0.0, 1.80373, 0, 0, Vector2( 1, 0.166667 ), -5.92383, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=4]
+curve = SubResource( 3 )
+
+[sub_resource type="ParticlesMaterial" id=5]
+lifetime_randomness = 0.6
+emission_shape = 1
+emission_sphere_radius = 3.0
+flag_disable_z = true
+direction = Vector3( 0, 1, 0 )
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 5.0
+initial_velocity_random = 0.15
+angular_velocity = 40.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+radial_accel = 2.0
+damping = 8.0
+damping_random = 1.0
+scale = 4.0
+scale_random = 0.25
+scale_curve = SubResource( 4 )
+color_ramp = SubResource( 10 )
+
+[sub_resource type="QuadMesh" id=7]
+
+[sub_resource type="SpatialMaterial" id=11]
+flags_transparent = true
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id=16]
+offsets = PoolRealArray( 0.195364, 0.288079, 0.827815, 1 )
+colors = PoolColorArray( 1, 1, 1, 1, 0.0348259, 0.0348259, 0.0348259, 1, 0.0351563, 0.0351563, 0.0351563, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=17]
+gradient = SubResource( 16 )
+
+[sub_resource type="Curve" id=14]
+_data = [ Vector2( 0, 1 ), 0.0, 0.778451, 0, 0, Vector2( 1, 0.282895 ), -1.76365, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=15]
+curve = SubResource( 14 )
+
+[sub_resource type="ParticlesMaterial" id=12]
+lifetime_randomness = 0.59
+flag_disable_z = true
+direction = Vector3( 0, 1, 0 )
+spread = 70.0
+gravity = Vector3( 0, -14, 0 )
+initial_velocity = 10.0
+initial_velocity_random = 0.2
+angular_velocity = 600.0
+angular_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 0.8
+scale_random = 0.06
+scale_curve = SubResource( 15 )
+color_ramp = SubResource( 17 )
+
+[sub_resource type="QuadMesh" id=13]
+
+[node name="CreatureDie" type="Spatial"]
+transform = Transform( 0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0 )
+script = ExtResource( 1 )
+
+[node name="Dust" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.104249, -0.0585476, 0.0107422 )
+material_override = SubResource( 8 )
+emitting = false
+amount = 30
+lifetime = 1.2
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+process_material = SubResource( 5 )
+draw_pass_1 = SubResource( 7 )
+
+[node name="Debris" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.17588 )
+material_override = SubResource( 11 )
+emitting = false
+amount = 12
+lifetime = 1.6
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource( 12 )
+draw_pass_1 = SubResource( 13 )

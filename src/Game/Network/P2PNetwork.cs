@@ -158,19 +158,6 @@ namespace CrazySnooker.Game.Network
          gameManager.playerOpponent.Shot();
       }
 
-      public void SendWhiteBallState(BallState whiteBallState)
-      {
-         var bytesState = MessagePackSerializer.Serialize(whiteBallState, lz4Options);
-         Rpc(nameof(ReceiveWhiteBallState), bytesState);
-      }
-
-      [Remote]
-      public void ReceiveWhiteBallState(byte[] bytesState)
-      {
-         var state = MessagePackSerializer.Deserialize<BallState>(bytesState, lz4Options);
-			gameManager.whiteBall.networkState = state;
-      }
-
 		public void SendBallsState(UpdatePackage updatePackage)
       {
          var bytesState = MessagePackSerializer.Serialize(updatePackage, lz4Options);

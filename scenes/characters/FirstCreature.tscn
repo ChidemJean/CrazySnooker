@@ -1,0 +1,132 @@
+[gd_scene load_steps=20 format=2]
+
+[ext_resource path="res://models/characters/first_creature.glb" type="PackedScene" id=1]
+[ext_resource path="res://models/accessories/cartola.glb" type="PackedScene" id=2]
+[ext_resource path="res://src/Game/Entities/Characters/Creature.cs" type="Script" id=3]
+
+[sub_resource type="AnimationNodeOneShot" id=7]
+filter_enabled = true
+filters = [ "Armature/Skeleton:bocabaixo", "Armature/Skeleton:bocacima" ]
+sync = true
+
+[sub_resource type="AnimationNodeAnimation" id=6]
+animation = "eat"
+
+[sub_resource type="AnimationNodeAdd2" id=20]
+
+[sub_resource type="AnimationNodeAnimation" id=19]
+animation = "fatten"
+
+[sub_resource type="AnimationNodeBlend2" id=16]
+filter_enabled = true
+filters = [ "Armature/Skeleton:antebraco.L", "Armature/Skeleton:antebraco.R", "Armature/Skeleton:bocacima", "Armature/Skeleton:cabeca", "Armature/Skeleton:indicador.L", "Armature/Skeleton:indicador.R", "Armature/Skeleton:mindinho.L", "Armature/Skeleton:mindinho.R", "Armature/Skeleton:polegar.L", "Armature/Skeleton:polegar.R" ]
+
+[sub_resource type="AnimationNodeAnimation" id=17]
+animation = "hit"
+
+[sub_resource type="AnimationNodeOneShot" id=14]
+
+[sub_resource type="AnimationNodeAnimation" id=13]
+animation = "hit"
+
+[sub_resource type="AnimationNodeAnimation" id=2]
+animation = "idleloop"
+
+[sub_resource type="AnimationNodeTimeScale" id=3]
+
+[sub_resource type="AnimationNodeAdd2" id=4]
+
+[sub_resource type="AnimationNodeAnimation" id=5]
+animation = "prepare_eat"
+
+[sub_resource type="AnimationNodeTimeScale" id=10]
+
+[sub_resource type="AnimationNodeBlendTree" id=1]
+graph_offset = Vector2( -334.624, -84.071 )
+nodes/Eat/node = SubResource( 7 )
+nodes/Eat/position = Vector2( 800, 20 )
+nodes/EatAnim/node = SubResource( 6 )
+nodes/EatAnim/position = Vector2( 800, 180 )
+nodes/Fatten/node = SubResource( 20 )
+nodes/Fatten/position = Vector2( 360, 20 )
+nodes/FattenAnim/node = SubResource( 19 )
+nodes/FattenAnim/position = Vector2( 360, 180 )
+nodes/Hit/node = SubResource( 16 )
+nodes/Hit/position = Vector2( 140, 20 )
+nodes/HitAnim/node = SubResource( 17 )
+nodes/HitAnim/position = Vector2( 140, 180 )
+nodes/HitShot/node = SubResource( 14 )
+nodes/HitShot/position = Vector2( 600, 20 )
+nodes/HitShotAnim/node = SubResource( 13 )
+nodes/HitShotAnim/position = Vector2( 600, 180 )
+nodes/IdleBreath/node = SubResource( 2 )
+nodes/IdleBreath/position = Vector2( -500, -60 )
+nodes/IdleBreathScale/node = SubResource( 3 )
+nodes/IdleBreathScale/position = Vector2( -360, -60 )
+nodes/PrepareEat/node = SubResource( 4 )
+nodes/PrepareEat/position = Vector2( -140, 40 )
+nodes/PrepareEatAnim/node = SubResource( 5 )
+nodes/PrepareEatAnim/position = Vector2( -540, 100 )
+nodes/PrepareEatScale/node = SubResource( 10 )
+nodes/PrepareEatScale/position = Vector2( -360, 100 )
+nodes/output/position = Vector2( 1140, 20 )
+node_connections = [ "Fatten", 0, "Hit", "Fatten", 1, "FattenAnim", "HitShot", 0, "Fatten", "HitShot", 1, "HitShotAnim", "PrepareEatScale", 0, "PrepareEatAnim", "IdleBreathScale", 0, "IdleBreath", "Eat", 0, "HitShot", "Eat", 1, "EatAnim", "PrepareEat", 0, "IdleBreathScale", "PrepareEat", 1, "PrepareEatScale", "Hit", 0, "PrepareEat", "Hit", 1, "HitAnim", "output", 0, "Eat" ]
+
+[sub_resource type="BoxShape" id=8]
+extents = Vector3( 0.677465, 0.389995, 0.290348 )
+
+[sub_resource type="SphereShape" id=11]
+radius = 2.10926
+
+[node name="FirstCreature" type="Spatial"]
+script = ExtResource( 3 )
+detectorPath = NodePath("Detector")
+animationTreePath = NodePath("first_creature/AnimationTree")
+animationPlayerPath = NodePath("first_creature/AnimationPlayer")
+viewPath = NodePath("View")
+
+[node name="first_creature" parent="." instance=ExtResource( 1 )]
+transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 0.02, -0.150565, 1.43464, 0 )
+
+[node name="body" parent="first_creature/Armature/Skeleton" index="0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.35266, 0 )
+
+[node name="BoneAttachment" type="BoneAttachment" parent="first_creature/Armature/Skeleton" index="1"]
+transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933072, -0.953768, -0.201927, -0.222603, -0.205026, -0.378468, 0.52973 )
+visible = false
+bone_name = "ombro.L"
+
+[node name="cartola" parent="first_creature/Armature/Skeleton/BoneAttachment" instance=ExtResource( 2 )]
+transform = Transform( -0.576593, -0.161465, -0.0383579, 0.0705725, -0.364063, 0.471678, -0.150206, 0.448764, 0.36885, 0.596008, 0.230972, -2.65909 )
+
+[node name="AnimationPlayer" parent="first_creature" index="1"]
+autoplay = "idleloop"
+
+[node name="AnimationTree" type="AnimationTree" parent="first_creature"]
+tree_root = SubResource( 1 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/Eat/active = false
+parameters/Fatten/add_amount = 0.0
+parameters/Hit/blend_amount = 0.0
+parameters/HitShot/active = false
+parameters/IdleBreathScale/scale = 1.0
+parameters/PrepareEat/add_amount = 0.0
+parameters/PrepareEatScale/scale = 1.0
+
+[node name="Detector" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.206133, 0.150744 )
+collision_layer = 32
+collision_mask = 24
+
+[node name="CollisionShape" type="CollisionShape" parent="Detector"]
+shape = SubResource( 8 )
+
+[node name="View" type="Area" parent="."]
+collision_layer = 256
+collision_mask = 16
+
+[node name="CollisionShape" type="CollisionShape" parent="View"]
+shape = SubResource( 11 )
+
+[editable path="first_creature"]

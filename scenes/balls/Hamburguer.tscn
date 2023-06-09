@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://src/Game/Entities/Balls/GenericBall.cs" type="Script" id=1]
+[ext_resource path="res://src/Game/Entities/Balls/FoodBall.cs" type="Script" id=1]
 [ext_resource path="res://models/food/hamburguer/hamburguer.glb" type="PackedScene" id=2]
 
 [sub_resource type="PhysicsMaterial" id=4]
@@ -22,6 +22,7 @@ can_sleep = false
 angular_damp = 0.25
 script = ExtResource( 1 )
 category = 4
+calories = 20.0
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 shape = SubResource( 3 )

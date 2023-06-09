@@ -75,6 +75,8 @@ namespace CrazySnooker.Game.Controllers
 
       public bool waintingFinishTurn = false;
 
+      public bool canShotInput = true;
+
       public override void _Ready()
       {
          gameManager = GetNode<GameManager>("%GameManager");
@@ -99,6 +101,8 @@ namespace CrazySnooker.Game.Controllers
          debugBallRight = GetNode<MeshInstance>("%MiniBallProjectionDebugRight");
          debugBallLeft = GetNode<MeshInstance>("%MiniBallProjectionDebugLeft");
          debugBallMiddle = GetNode<MeshInstance>("%MiniBallProjectionDebugMiddle");
+
+         canShotInput = !PlatformUtils.IsOnMobile(OS.GetName());
       }
 
       public void UpdateID(int id)
@@ -216,7 +220,7 @@ namespace CrazySnooker.Game.Controllers
                   Move(-1);
                   network.SendMoveCue(-1);
                }
-               if (emb.ButtonIndex == (int)ButtonList.Left)
+               if (canShotInput && emb.ButtonIndex == (int)ButtonList.Left)
                {
                   Shot();
                   network.SendShot();

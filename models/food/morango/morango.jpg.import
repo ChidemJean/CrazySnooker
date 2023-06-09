@@ -4,15 +4,16 @@ importer="texture"
 type="StreamTexture"
 path.s3tc="res://.import/morango.jpg-18fd2daa0b8eca0504a1e2792a8d6f85.s3tc.stex"
 path.etc2="res://.import/morango.jpg-18fd2daa0b8eca0504a1e2792a8d6f85.etc2.stex"
+path.etc="res://.import/morango.jpg-18fd2daa0b8eca0504a1e2792a8d6f85.etc.stex"
 metadata={
-"imported_formats": [ "s3tc", "etc2" ],
+"imported_formats": [ "s3tc", "etc2", "etc" ],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://models/food/morango/morango.jpg"
-dest_files=[ "res://.import/morango.jpg-18fd2daa0b8eca0504a1e2792a8d6f85.s3tc.stex", "res://.import/morango.jpg-18fd2daa0b8eca0504a1e2792a8d6f85.etc2.stex" ]
+dest_files=[ "res://.import/morango.jpg-18fd2daa0b8eca0504a1e2792a8d6f85.s3tc.stex", "res://.import/morango.jpg-18fd2daa0b8eca0504a1e2792a8d6f85.etc2.stex", "res://.import/morango.jpg-18fd2daa0b8eca0504a1e2792a8d6f85.etc.stex" ]
 
 [params]
 
