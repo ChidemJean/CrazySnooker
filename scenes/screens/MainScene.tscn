@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://scenes/screens/GameScene.tscn" type="PackedScene" id=1]
 [ext_resource path="res://src/Global/AudioManager.cs" type="Script" id=2]
@@ -19,6 +19,21 @@
 [ext_resource path="res://src/Game/Viewport3D.cs" type="Script" id=17]
 [ext_resource path="res://src/Tools/RenderSize.cs" type="Script" id=18]
 [ext_resource path="res://scenes/CLI.tscn" type="PackedScene" id=19]
+
+[sub_resource type="SpatialMaterial" id=10]
+resource_local_to_scene = true
+flags_transparent = true
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+flags_disable_ambient_light = true
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id=11]
+resource_local_to_scene = true
+size = Vector2( 0.6, 0.157 )
 
 [sub_resource type="StyleBoxFlat" id=8]
 content_margin_left = 20.0
@@ -168,9 +183,14 @@ shadow_atlas_quad_1 = 3
 shadow_atlas_quad_2 = 4
 shadow_atlas_quad_3 = 5
 script = ExtResource( 17 )
+scaleFactor = 0.65
 
 [node name="GameScene" parent="ViewportContainer/Viewport" instance=ExtResource( 1 )]
 unique_name_in_owner = true
+
+[node name="CaloriesBar3D" parent="ViewportContainer/Viewport/GameScene/FristCreature" index="4"]
+material_override = SubResource( 10 )
+mesh = SubResource( 11 )
 
 [node name="Hud" type="Control" parent="."]
 anchor_right = 1.0
@@ -706,5 +726,8 @@ script = ExtResource( 18 )
 
 [editable path="ViewportContainer/Viewport/GameScene"]
 [editable path="ViewportContainer/Viewport/GameScene/PoolCueYou"]
+[editable path="ViewportContainer/Viewport/GameScene/PoolCueYou/PoolCue/pool_cue"]
 [editable path="ViewportContainer/Viewport/GameScene/ProjectionGroup/Projection"]
 [editable path="ViewportContainer/Viewport/GameScene/ProjectionGroup/ProjectionNext"]
+[editable path="ViewportContainer/Viewport/GameScene/FristCreature"]
+[editable path="ViewportContainer/Viewport/GameScene/FristCreature/first_creature"]

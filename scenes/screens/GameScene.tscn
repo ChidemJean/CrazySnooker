@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=26 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/balls/Morango.tscn" type="PackedScene" id=2]
@@ -43,6 +43,21 @@ flags_transparent = true
 flags_unshaded = true
 flags_do_not_receive_shadows = true
 albedo_color = Color( 1, 1, 1, 0.592157 )
+
+[sub_resource type="SpatialMaterial" id=11]
+resource_local_to_scene = true
+flags_transparent = true
+flags_unshaded = true
+flags_do_not_receive_shadows = true
+flags_disable_ambient_light = true
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id=12]
+resource_local_to_scene = true
+size = Vector2( 0.6, 0.157 )
 
 [node name="GameScene" type="Spatial"]
 
@@ -117,7 +132,7 @@ script = ExtResource( 12 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.62633, 0 )
 projectionMask = 18
 
-[node name="Camera" parent="PoolCueYou" index="1"]
+[node name="Camera" parent="PoolCueYou" index="2"]
 doppler_tracking = 1
 
 [node name="PoolCueOpponent" parent="." instance=ExtResource( 5 )]
@@ -315,22 +330,29 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.89075, 2.08898, 8.51983 )
 speed = 7.0
 
 [node name="FristCreature" parent="." instance=ExtResource( 17 )]
-transform = Transform( 0.77188, 0, 0.635768, 0, 1, 0, -0.635768, 0, 0.77188, 4.12811, 2.09804, 15.2452 )
+transform = Transform( 0.74416, 0, 0.668001, 0, 1, 0, -0.668001, 0, 0.74416, 4.17757, 1.88278, 15.1959 )
+
+[node name="BoneAttachment" parent="FristCreature/first_creature/Armature/Skeleton" index="1"]
+transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933072, -0.953768, -0.201927, -0.222603, -0.205026, -0.332012, 0.52973 )
+
+[node name="CaloriesBar3D" parent="FristCreature" index="4"]
+material_override = SubResource( 11 )
+mesh = SubResource( 12 )
 
 [node name="FristCreature2" parent="." instance=ExtResource( 17 )]
-transform = Transform( 0.739255, 0, -0.673425, 0, 1, 0, 0.673425, 0, 0.739255, -4.27, 2.09804, 15.2045 )
+transform = Transform( 0.751218, 0, -0.660054, 0, 1, 0, 0.660054, 0, 0.751218, -4.19683, 1.9162, 15.2185 )
 
 [node name="FristCreature3" parent="." instance=ExtResource( 17 )]
-transform = Transform( -0.71713, 0, 0.69694, 0, 1, 0, -0.69694, 0, -0.71713, 4.26307, 2.07504, 1.96167 )
+transform = Transform( -0.701333, 0, 0.712835, 0, 1, 0, -0.712835, 0, -0.701333, 4.19319, 1.93377, 1.92498 )
 
 [node name="FristCreature4" parent="." instance=ExtResource( 17 )]
-transform = Transform( -0.660172, 0, -0.751114, 0, 1, 0, 0.751114, 0, -0.660172, -4.19035, 2.09804, 1.86268 )
+transform = Transform( -0.660172, 0, -0.751114, 0, 1, 0, 0.751114, 0, -0.660172, -4.19023, 1.93265, 1.93498 )
 
 [node name="FristCreature5" parent="." instance=ExtResource( 17 )]
-transform = Transform( -0.0275377, 0, -0.999621, 0, 1, 0, 0.999621, 0, -0.0275377, -3.41097, 2.07895, 8.49148 )
+transform = Transform( -0.0275377, 0, -0.999621, 0, 1, 0, 0.999621, 0, -0.0275377, -3.35369, 1.89151, 8.58805 )
 
 [node name="FristCreature6" parent="." instance=ExtResource( 17 )]
-transform = Transform( -0.0168243, 0, 0.999858, 0, 1, 0, -0.999858, 0, -0.0168243, 3.4065, 2.11026, 8.62234 )
+transform = Transform( -0.0168243, 0, 0.999858, 0, 1, 0, -0.999858, 0, -0.0168243, 3.34473, 1.89097, 8.55863 )
 
 [node name="Label3D" type="Label3D" parent="."]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.0155255, 2.05965, 3.21471 )
@@ -354,5 +376,8 @@ font = ExtResource( 19 )
 autowrap = true
 
 [editable path="PoolCueYou"]
+[editable path="PoolCueYou/PoolCue/pool_cue"]
 [editable path="ProjectionGroup/Projection"]
 [editable path="ProjectionGroup/ProjectionNext"]
+[editable path="FristCreature"]
+[editable path="FristCreature/first_creature"]
