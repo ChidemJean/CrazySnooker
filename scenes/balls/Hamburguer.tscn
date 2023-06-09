@@ -22,7 +22,7 @@ can_sleep = false
 angular_damp = 0.25
 script = ExtResource( 1 )
 category = 4
-calories = 20.0
+calories = 60.0
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
 shape = SubResource( 3 )

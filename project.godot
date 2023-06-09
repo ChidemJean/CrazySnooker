@@ -39,6 +39,9 @@ common/drop_mouse_on_gui_input_disabled=true
 
 [layer_names]
 
+3d_render/layer_2="Balls"
+3d_render/layer_3="Creatures"
+3d_render/layer_4="Table"
 3d_physics/layer_2="Table"
 3d_physics/layer_3="PoolCue"
 3d_physics/layer_4="WhiteBall"

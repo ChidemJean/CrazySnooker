@@ -73,9 +73,13 @@ namespace CrazySnooker.Game.Controllers
       [Export]
       public bool isRemote = false;
 
-      public bool waintingFinishTurn = false;
+      [Export]
+      public float timeToFinishTurn = 6f;
+
+      public bool waitingFinishTurn = false;
 
       public bool canShotInput = true;
+      public bool isYourTurn = false;
 
       public override void _Ready()
       {
@@ -121,6 +125,7 @@ namespace CrazySnooker.Game.Controllers
             if (!isRemote) {
                camera.Current = true;
                outCamera.Current = false;
+               isYourTurn = true;
             }
          }
          else
@@ -129,6 +134,7 @@ namespace CrazySnooker.Game.Controllers
             if (!isRemote) {
                outCamera.Current = true;
                camera.Current = false;
+               isYourTurn = false;
             }
          }
       }
@@ -157,11 +163,11 @@ namespace CrazySnooker.Game.Controllers
                if (Engine.GetPhysicsFrames() % 10 == 0)
                {
                   gameManager.SendBallsPackage();
-                  if (waintingFinishTurn)
+                  if (waitingFinishTurn)
                   {
                      if (!gameManager.AnyBallIsMoving())
                      {
-                        waintingFinishTurn = false;
+                        waitingFinishTurn = false;
                         gameManager.SendUpdateTurn();
                         return;
                      }
@@ -264,7 +270,7 @@ namespace CrazySnooker.Game.Controllers
 
       public void UpdateProjection()
       {
-         if (isRemote || gameManager.playerTurnId != playerID || waintingFinishTurn)
+         if (isRemote || gameManager.playerTurnId != playerID || waitingFinishTurn)
          {
             UpdateProjectionVisible(false);
             return;
@@ -478,7 +484,7 @@ namespace CrazySnooker.Game.Controllers
 
       public async void Shot()
       {
-         if (initialPos == null || waintingFinishTurn) return;
+         if (initialPos == null || waitingFinishTurn) return;
          canShot = true;
          shotPos = areaDetector.Translation;
          SceneTreeTween tween = GetTree().CreateTween();
@@ -494,8 +500,15 @@ namespace CrazySnooker.Game.Controllers
             audioManager.Play("cue_in_whiteball", null, whiteBall.GlobalTranslation);
             canShot = false;
             shotPos = null;
-            waintingFinishTurn = true;
+            WaitingFinishTurn();
          }
+      }
+
+      public async void WaitingFinishTurn()
+      {
+         isYourTurn = false;
+         await ToSignal(GetTree().CreateTimer(timeToFinishTurn), "timeout");
+         waitingFinishTurn = true;
       }
    }
 }

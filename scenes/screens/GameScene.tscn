@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/balls/Morango.tscn" type="PackedScene" id=2]
@@ -18,6 +18,7 @@
 [ext_resource path="res://src/Game/OutCamera.cs" type="Script" id=16]
 [ext_resource path="res://scenes/characters/FirstCreature.tscn" type="PackedScene" id=17]
 [ext_resource path="res://scenes/particles/ExplosionParticles.tscn" type="PackedScene" id=18]
+[ext_resource path="res://assets/fonts/baloom_big.tres" type="DynamicFont" id=19]
 
 [sub_resource type="CylinderMesh" id=8]
 top_radius = 0.01
@@ -68,17 +69,37 @@ use_threads = true
 
 [node name="SpotLight" type="SpotLight" parent="."]
 transform = Transform( 1, 0, 0, 0, -0.679787, 0.73341, 0, -0.73341, -0.679787, 0, 7.6207, -2.40365 )
-light_energy = 3.0
+light_energy = 4.0
 shadow_enabled = true
-spot_range = 13.6017
+spot_range = 15.6592
 spot_angle = 51.6657
 
 [node name="SpotLight2" type="SpotLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.672122, 0.740441, 0, -0.740441, 0.672122, 0, 8.09703, 19.2128 )
-light_energy = 3.0
+light_energy = 4.0
 shadow_enabled = true
-spot_range = 18.6645
+spot_range = 18.7326
 spot_angle = 42.3873
+
+[node name="SpotLight3" type="SpotLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.0070336, -0.999975, 0, 0.999975, 0.0070336, 0, -7.47809, 4.32065 )
+visible = false
+light_color = Color( 0.556863, 0.0941176, 0.701961, 1 )
+light_energy = 10.0
+light_specular = 4.0
+light_cull_mask = 4293918732
+spot_range = 27.7
+spot_angle = 52.4149
+
+[node name="SpotLight4" type="SpotLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.0070336, -0.999975, 0, 0.999975, 0.0070336, 0, -7.47809, 11.2783 )
+visible = false
+light_color = Color( 0.556863, 0.0941176, 0.701961, 1 )
+light_energy = 10.0
+light_specular = 4.0
+light_cull_mask = 4293918732
+spot_range = 27.7
+spot_angle = 52.4149
 
 [node name="OutCamera" type="Camera" parent="."]
 unique_name_in_owner = true
@@ -93,12 +114,14 @@ script = ExtResource( 16 )
 script = ExtResource( 12 )
 
 [node name="PoolCueYou" parent="." instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.62633, 0 )
 projectionMask = 18
 
 [node name="Camera" parent="PoolCueYou" index="1"]
 doppler_tracking = 1
 
 [node name="PoolCueOpponent" parent="." instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.67487, 0 )
 isRemote = true
 
 [node name="Table" type="Spatial" parent="."]
@@ -137,6 +160,7 @@ gravity_scale = 2.0
 angular_damp = 1.0
 
 [node name="BallsGroup" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.158103, 0, 0 )
 
 [node name="Hamburguer" parent="BallsGroup" instance=ExtResource( 4 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.415236, 2.15841, 4.82014 )
@@ -283,11 +307,11 @@ visible = false
 skeleton = NodePath("../..")
 
 [node name="SpiningTrap2" parent="." instance=ExtResource( 15 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.99122, 2.08898, 8.59225 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -1.99122, 2.08898, 8.51983 )
 speed = 7.0
 
 [node name="SpiningTrap3" parent="." instance=ExtResource( 15 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.89075, 2.08898, 8.59225 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.89075, 2.08898, 8.51983 )
 speed = 7.0
 
 [node name="FristCreature" parent="." instance=ExtResource( 17 )]
@@ -307,6 +331,27 @@ transform = Transform( -0.0275377, 0, -0.999621, 0, 1, 0, 0.999621, 0, -0.027537
 
 [node name="FristCreature6" parent="." instance=ExtResource( 17 )]
 transform = Transform( -0.0168243, 0, 0.999858, 0, 1, 0, -0.999858, 0, -0.0168243, 3.4065, 2.11026, 8.62234 )
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.0155255, 2.05965, 3.21471 )
+modulate = Color( 1, 1, 1, 0.0431373 )
+text = "Chidem Games"
+font = ExtResource( 19 )
+autowrap = true
+
+[node name="Label3D2" type="Label3D" parent="."]
+transform = Transform( -1, 8.74228e-08, 3.82137e-15, 0, -4.37114e-08, 1, 8.74228e-08, 1, 4.37114e-08, -0.0605215, 2.05965, 13.9158 )
+modulate = Color( 1, 1, 1, 0.0431373 )
+text = "Chidem Games"
+font = ExtResource( 19 )
+autowrap = true
+
+[node name="Label3D3" type="Label3D" parent="."]
+transform = Transform( -1, 8.74228e-08, 3.82137e-15, 0, -4.37114e-08, 1, 8.74228e-08, 1, 4.37114e-08, -0.00194611, 2.05965, 8.48872 )
+modulate = Color( 1, 1, 1, 0.0431373 )
+text = "------------ X ------------"
+font = ExtResource( 19 )
+autowrap = true
 
 [editable path="PoolCueYou"]
 [editable path="ProjectionGroup/Projection"]

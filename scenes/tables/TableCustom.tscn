@@ -27,4 +27,7 @@ shape = SubResource( 3 )
 
 [node name="table_custom" parent="." instance=ExtResource( 1 )]
 
+[node name="Cube" parent="table_custom" index="0"]
+layers = 8
+
 [editable path="table_custom"]
