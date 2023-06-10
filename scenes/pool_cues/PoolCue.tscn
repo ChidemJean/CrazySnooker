@@ -14,8 +14,8 @@ radius = 0.0576774
 [sub_resource type="SpatialMaterial" id=4]
 
 [sub_resource type="CylinderMesh" id=3]
-top_radius = 0.06
-bottom_radius = 0.08
+top_radius = 0.02
+bottom_radius = 0.05
 height = 0.7
 radial_segments = 6
 rings = 2
@@ -31,6 +31,7 @@ maxForce = 260.0
 ballRadius = 0.106
 sizeNextLineProjection = 0.5
 cameraPath = NodePath("Camera")
+rotationFactor = 1.5
 
 [node name="PoolCue" type="Area" parent="."]
 transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0 )
@@ -45,7 +46,7 @@ transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.3496
 shape = SubResource( 1 )
 
 [node name="MeshInstance" type="MeshInstance" parent="PoolCue"]
-transform = Transform( -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -0.390313, 0, 1.70611e-08 )
+transform = Transform( -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, -0.410697, 0, 1.79521e-08 )
 material_override = SubResource( 4 )
 mesh = SubResource( 3 )
 
@@ -69,3 +70,59 @@ far = 4482.9
 
 [node name="Shake" type="Node" parent="Camera"]
 script = ExtResource( 4 )
+
+[node name="RayCast" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0.240938 )
+enabled = true
+cast_to = Vector3( 0, -50, 0 )
+collision_mask = 18
+debug_shape_custom_color = Color( 1, 0, 0, 1 )
+debug_shape_thickness = 1
+
+[node name="RayCast2" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.108666, 0, 0.175001 )
+enabled = true
+cast_to = Vector3( 0, -50, 0 )
+collision_mask = 18
+debug_shape_custom_color = Color( 1, 0, 0, 1 )
+debug_shape_thickness = 1
+
+[node name="RayCast3" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.0966558, 0, 0.175001 )
+enabled = true
+cast_to = Vector3( 0, -50, 0 )
+collision_mask = 18
+debug_shape_custom_color = Color( 1, 0, 0, 1 )
+debug_shape_thickness = 1
+
+[node name="RayCast4" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.0371753, 0, 0.236186 )
+enabled = true
+cast_to = Vector3( 0, -50, 0 )
+collision_mask = 18
+debug_shape_custom_color = Color( 1, 0, 0, 1 )
+debug_shape_thickness = 1
+
+[node name="RayCast5" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.0743506, 0, 0.216139 )
+enabled = true
+cast_to = Vector3( 0, -50, 0 )
+collision_mask = 18
+debug_shape_custom_color = Color( 1, 0, 0, 1 )
+debug_shape_thickness = 1
+
+[node name="RayCast6" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.0325999, 0, 0.233323 )
+enabled = true
+cast_to = Vector3( 0, -50, 0 )
+collision_mask = 18
+debug_shape_custom_color = Color( 1, 0, 0, 1 )
+debug_shape_thickness = 1
+
+[node name="RayCast7" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -0.0686313, 0, 0.209839 )
+enabled = true
+cast_to = Vector3( 0, -50, 0 )
+collision_mask = 18
+debug_shape_custom_color = Color( 1, 0, 0, 1 )
+debug_shape_thickness = 1

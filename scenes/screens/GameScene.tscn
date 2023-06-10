@@ -83,7 +83,7 @@ unique_name_in_owner = true
 use_threads = true
 
 [node name="SpotLight" type="SpotLight" parent="."]
-transform = Transform( 1, 0, 0, 0, -0.679787, 0.73341, 0, -0.73341, -0.679787, 0, 7.6207, -2.40365 )
+transform = Transform( 1, 0, 0, 0, -0.679787, 0.73341, 0, -0.73341, -0.679787, 0, 7, -2.404 )
 light_energy = 4.0
 shadow_enabled = true
 spot_range = 15.6592
@@ -131,6 +131,7 @@ script = ExtResource( 12 )
 [node name="PoolCueYou" parent="." instance=ExtResource( 5 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.62633, 0 )
 projectionMask = 18
+rotationFactor = 0.005
 
 [node name="Camera" parent="PoolCueYou" index="2"]
 doppler_tracking = 1
@@ -333,7 +334,7 @@ speed = 7.0
 transform = Transform( 0.74416, 0, 0.668001, 0, 1, 0, -0.668001, 0, 0.74416, 4.17757, 1.88278, 15.1959 )
 
 [node name="BoneAttachment" parent="FristCreature/first_creature/Armature/Skeleton" index="1"]
-transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933072, -0.953768, -0.201927, -0.222603, -0.205026, -0.332012, 0.52973 )
+transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933072, -0.953768, -0.201927, -0.222603, -0.205026, -0.378468, 0.52973 )
 
 [node name="CaloriesBar3D" parent="FristCreature" index="4"]
 material_override = SubResource( 11 )

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using CrazySnooker.Game.Entities.Balls;
 using CrazySnooker.Extensions;
 using CrazySnooker.Game.Managers;
@@ -10,6 +11,16 @@ using CrazySnooker.Game.Network.Messages;
 
 namespace CrazySnooker.Game.Controllers
 {
+   public struct ProjectionResultData
+   {
+      public float minDist;
+      public Vector3 minPosCollided;
+      public Vector3 minNormal;
+      public Vector3 objCenter;
+      public Node curTargetProj;
+   }
+
+
    public class PoolCueController : Spatial
    {
 
@@ -40,7 +51,11 @@ namespace CrazySnooker.Game.Controllers
 
       private GenericBall whiteBall;
 
+      [Export]
       private float rotationFactor = 2f;
+
+      [Export]
+      private bool manualProjection = false;
 
       private Area areaDetector;
 
@@ -63,7 +78,7 @@ namespace CrazySnooker.Game.Controllers
       private MeshInstance debugBallRight;
       private MeshInstance debugBallLeft;
       private MeshInstance debugBallMiddle;
-      private GameManager gameManager;
+      public GameManager gameManager;
       private AudioManager audioManager;
       private INetwork network;
       private MainScene mainScene;
@@ -76,10 +91,15 @@ namespace CrazySnooker.Game.Controllers
       [Export]
       public float timeToFinishTurn = 6f;
 
+      [Export]
+      public float waitingTimeToFinishTurn = 6f;
+
       public bool waitingFinishTurn = false;
 
       public bool canShotInput = true;
       public bool isYourTurn = false;
+
+      private List<RayCast> rays = new List<RayCast>();
 
       public override void _Ready()
       {
@@ -106,6 +126,14 @@ namespace CrazySnooker.Game.Controllers
          debugBallLeft = GetNode<MeshInstance>("%MiniBallProjectionDebugLeft");
          debugBallMiddle = GetNode<MeshInstance>("%MiniBallProjectionDebugMiddle");
 
+         foreach (Node node in GetChildren())
+         {
+            if (node is RayCast)
+            {
+               rays.Add((RayCast)node);
+            }
+         }
+
          canShotInput = !PlatformUtils.IsOnMobile(OS.GetName());
       }
 
@@ -117,12 +145,13 @@ namespace CrazySnooker.Game.Controllers
       public void ChangeTurn(int id)
       {
          canShot = false;
-         if (initialPos != null) areaDetector.Translation = (Vector3) initialPos;
+         if (initialPos != null) areaDetector.Translation = (Vector3)initialPos;
 
          if (id == playerID)
          {
             Visible = true;
-            if (!isRemote) {
+            if (!isRemote)
+            {
                camera.Current = true;
                outCamera.Current = false;
                isYourTurn = true;
@@ -131,7 +160,8 @@ namespace CrazySnooker.Game.Controllers
          else
          {
             Visible = false;
-            if (!isRemote) {
+            if (!isRemote)
+            {
                outCamera.Current = true;
                camera.Current = false;
                isYourTurn = false;
@@ -141,7 +171,7 @@ namespace CrazySnooker.Game.Controllers
 
       public void OnWhiteBallCollide(Node bodyEntered)
       {
-         if (bodyEntered is WhiteBall && gameManager.playerTurnId == playerID)
+         if (bodyEntered is WhiteBall && gameManager.playerTurnId == playerID && !waitingFinishTurn)
          {
             ApplyImpulse();
          }
@@ -150,13 +180,13 @@ namespace CrazySnooker.Game.Controllers
       public override void _PhysicsProcess(float delta)
       {
          if (playerID == -1) return;
-         
+
          var forward = GlobalTransform.basis.z.Normalized();
          GlobalTranslation = whiteBall.GlobalTransform.origin - forward * .1f;
-         
+
          if (gameManager.playerTurnId == playerID)
          {
-            bool whiteBallMoving = whiteBall.LinearVelocity.Length() < .02f;
+            bool anyBallMoving = gameManager.AnyBallIsMoving();
 
             if (!isRemote)
             {
@@ -165,7 +195,13 @@ namespace CrazySnooker.Game.Controllers
                   gameManager.SendBallsPackage();
                   if (waitingFinishTurn)
                   {
-                     if (!gameManager.AnyBallIsMoving())
+                     if (gameManager.IsNextTurnMy())
+                     {
+                        waitingFinishTurn = false;
+                        gameManager.ClearPocketedBalls();
+                        return;
+                     }
+                     if (!anyBallMoving)
                      {
                         waitingFinishTurn = false;
                         gameManager.SendUpdateTurn();
@@ -174,8 +210,8 @@ namespace CrazySnooker.Game.Controllers
                   }
                }
             }
-            
-            if (whiteBallMoving)
+
+            if (!anyBallMoving)
             {
                areaDetector.Visible = true;
                UpdateProjection();
@@ -192,7 +228,7 @@ namespace CrazySnooker.Game.Controllers
       {
          projectionBall.Visible = visible;
          projection.Visible = visible;
-         projectionNext.Visible = visible;
+         // projectionNext.Visible = visible;
          debugBallTop.Visible = visible;
          debugBallBottom.Visible = visible;
          debugBallRight.Visible = visible;
@@ -207,8 +243,9 @@ namespace CrazySnooker.Game.Controllers
          if (ev is InputEventMouseMotion)
          {
             Vector2 rel = (ev as InputEventMouseMotion).Relative;
-            float move = (rel.x / (rotationFactor)) * -1;
-            RotationDegrees = new Vector3(RotationDegrees.x, RotationDegrees.y + move, RotationDegrees.z);
+            float move = (-rel.x * rotationFactor);
+            // RotationDegrees = new Vector3(RotationDegrees.x, RotationDegrees.y + move, RotationDegrees.z);
+            RotateY(move);
             network.SendRotationCue(RotationDegrees);
          }
          if (ev is InputEventMouseButton)
@@ -282,106 +319,9 @@ namespace CrazySnooker.Game.Controllers
          Vector3 whiteBallPos = whiteBall.GlobalTransform.origin;
          PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
 
-         Vector3 forwardRay = (forward * 1000);
+         ProjectionResultData resultData = manualProjection ? GetManualProjetionResult() : GetProjetionResult();
 
-         Vector3 fromTop = whiteBallPos + new Vector3(-ballRadius / 2, 0, 0);
-         Vector3 toTop = forwardRay + new Vector3(0, ballRadius, 0);
-         var resultTop = spaceState.IntersectRay(fromTop, toTop, null, projectionMask);
-         var posTop = CheckProjectionUnit(resultTop, debugBallTop, fromTop);
-
-         Vector3 fromBottom = whiteBallPos + new Vector3(ballRadius / 2, 0, 0);
-         Vector3 toBottom = forwardRay + new Vector3(0, -ballRadius, 0);
-         var resultBottom = spaceState.IntersectRay(fromBottom, toBottom, null, projectionMask);
-         var posBottom = CheckProjectionUnit(resultBottom, debugBallBottom, fromBottom);
-
-         Vector3 fromRight = whiteBallPos + new Vector3(-ballRadius, 0, 0);
-         Vector3 toRight = forwardRay + new Vector3(-ballRadius, 0, 0);
-         var resultRight = spaceState.IntersectRay(fromRight, toRight, null, projectionMask);
-         var posRight = CheckProjectionUnit(resultRight, debugBallRight, fromRight);
-
-         Vector3 fromLeft = whiteBallPos + new Vector3(ballRadius, 0, 0);
-         Vector3 toLeft = forwardRay + new Vector3(ballRadius, 0, 0);
-         var resultLeft = spaceState.IntersectRay(fromLeft, toLeft, null, projectionMask);
-         var posLeft = CheckProjectionUnit(resultLeft, debugBallLeft, fromLeft);
-
-         Vector3 fromMiddle = whiteBallPos;
-         Vector3 toMiddle = forwardRay;
-         var resultMiddle = spaceState.IntersectRay(fromMiddle, toMiddle, null, projectionMask);
-         var posMiddle = CheckProjectionUnit(resultMiddle, debugBallMiddle, fromMiddle);
-
-         float minDist = Mathf.Inf;
-         Vector3 minPosCollided = Vector3.Zero;
-         Vector3 minNormal = Vector3.Zero;
-         Vector3 objCenter = Vector3.Zero;
-         Node curTargetProj = null;
-
-         if (posTop != null)
-         {
-            var posT = (Vector3)posTop[0];
-            float distT = posT.DistanceTo(whiteBallPos);
-            if (minDist > distT)
-            {
-               minPosCollided = posT;
-               minDist = distT;
-               minNormal = (Vector3) posTop[1];
-               objCenter = (Vector3) posTop[2];
-               curTargetProj = (Node) posTop[3];
-            }
-         }
-         if (posBottom != null)
-         {
-            var posB = (Vector3)posBottom[0];
-            float distB = posB.DistanceTo(whiteBallPos);
-            if (minDist > distB)
-            {
-               minPosCollided = posB;
-               minDist = distB;
-               minNormal = (Vector3) posBottom[1];
-               objCenter = (Vector3) posBottom[2];
-               curTargetProj = (Node) posBottom[3];
-            }
-         }
-         if (posRight != null)
-         {
-            var posR = (Vector3)posRight[0];
-            float distR = posR.DistanceTo(whiteBallPos);
-            if (minDist > distR)
-            {
-               minPosCollided = posR;
-               minDist = distR;
-               minNormal = (Vector3) posRight[1];
-               objCenter = (Vector3) posRight[2];
-               curTargetProj = (Node) posRight[3];
-            }
-         }
-         if (posLeft != null)
-         {
-            var posL = (Vector3)posLeft[0];
-            float distL = posL.DistanceTo(whiteBallPos);
-            if (minDist > distL)
-            {
-               minPosCollided = posL;
-               minDist = distL;
-               minNormal = (Vector3) posLeft[1];
-               objCenter = (Vector3) posLeft[2];
-               curTargetProj = (Node) posLeft[3];
-            }
-         }
-         if (posMiddle != null)
-         {
-            var posM = (Vector3)posMiddle[0];
-            float distM = posM.DistanceTo(whiteBallPos);
-            if (minDist > distM)
-            {
-               minPosCollided = posM;
-               minDist = distM;
-               minNormal = (Vector3) posMiddle[1];
-               objCenter = (Vector3) posMiddle[2];
-               curTargetProj = (Node) posMiddle[3];
-            }
-         }
-
-         Vector3 posCollidedProj = minPosCollided + minNormal * ballRadius;
+         Vector3 posCollidedProj = resultData.minPosCollided + resultData.minNormal * ballRadius;
          Vector3 projectionFinalPos = whiteBallPos + (forward * posCollidedProj.DistanceTo(whiteBallPos));
 
          // PROJECTION LINE
@@ -406,16 +346,21 @@ namespace CrazySnooker.Game.Controllers
          SpatialMaterial ballMaterial = projectionBall.GetSurfaceMaterial(0) as SpatialMaterial;
          SpatialMaterial lineMaterial = projectionMesh.GetSurfaceMaterial(0) as SpatialMaterial;
          ballMaterial.AlbedoColor = new Color(1, 1, 1, .8f);
-         lineMaterial.AlbedoColor = new Color(1, 1, 1, .8f);
+         // lineMaterial.AlbedoColor = new Color(1, 1, 1, .8f);
 
-         if (curTargetProj != null) {
-            if (curTargetProj is GenericBall && gameManager.yourBallCategory != BallCategory.UNDEFINED) {
-               if (((GenericBall)curTargetProj).category == gameManager.yourBallCategory) {
+         if (resultData.curTargetProj != null)
+         {
+            if (resultData.curTargetProj is GenericBall && gameManager.yourBallCategory != BallCategory.UNDEFINED)
+            {
+               if (((GenericBall)resultData.curTargetProj).category == gameManager.yourBallCategory)
+               {
                   ballMaterial.AlbedoColor = new Color(0, 0, 1, .8f);
-                  lineMaterial.AlbedoColor = new Color(0, 0, 1, .8f);
-               } else {
+                  // lineMaterial.AlbedoColor = new Color(0, 0, 1, .8f);
+               }
+               else
+               {
                   ballMaterial.AlbedoColor = new Color(1, 0, 0, .8f);
-                  lineMaterial.AlbedoColor = new Color(1, 0, 0, .8f);
+                  // lineMaterial.AlbedoColor = new Color(1, 0, 0, .8f);
                }
             }
          }
@@ -423,16 +368,23 @@ namespace CrazySnooker.Game.Controllers
          projectionBall.SetSurfaceMaterial(0, ballMaterial);
 
          // COLLIDED WITH ANY
-         if (minDist != Mathf.Inf)
+         if (resultData.minDist != Mathf.Inf)
          {
-            projectionNext.Visible = true;
             // PROJECTION NEXT LINE
-            if (objCenter != Vector3.Zero)
+            if (resultData.objCenter != Vector3.Zero && resultData.curTargetProj is FoodBall)
             {
                // IS A BALL
-               projectionNext.GlobalTranslation = objCenter;
+               FoodBall foodBall = (FoodBall)resultData.curTargetProj;
+               if (gameManager.yourBallCategory != BallCategory.UNDEFINED && foodBall.category != gameManager.yourBallCategory)
+               {
+                  ChangeNextProjectionVisible(false);
+                  return;
+               }
+               ChangeNextProjectionVisible(true);
+
+               projectionNext.GlobalTranslation = resultData.objCenter;
                Transform projectionNextTrans = projectionNext.GlobalTransform;
-               Vector3 predictionPoint = objCenter + objCenter.DirectionTo(projectionFinalPos) * -1 * 5;
+               Vector3 predictionPoint = resultData.objCenter + resultData.objCenter.DirectionTo(projectionFinalPos) * -1 * 5;
                Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(predictionPoint);
                projectionNextTrans.basis = lookAtBasisNext;
                projectionNext.GlobalTransform = projectionNextTrans;
@@ -440,10 +392,11 @@ namespace CrazySnooker.Game.Controllers
             }
             else
             {
+               ChangeNextProjectionVisible(false);
                // IS TABLE
                projectionNext.GlobalTranslation = projectionFinalPos;
                Transform projectionNextTrans = projectionNext.GlobalTransform;
-               Vector3 normal = projectionFinalPos + minNormal * 10;
+               Vector3 normal = projectionFinalPos + resultData.minNormal * 10;
                float angle = projectionFinalPos.DirectionTo(whiteBallPos).SignedAngleTo(normal, Vector3.Up);
                Vector3 flippedVec = normal.Rotated(Vector3.Up, angle * .5f);
                Basis lookAtBasisNext = projectionNextTrans.LookAtBasis(flippedVec * 10);
@@ -461,9 +414,159 @@ namespace CrazySnooker.Game.Controllers
             arrowNextTranslation.z = sizeNextLineProjection;
             projectionArrowNext.Translation = arrowNextTranslation;
          }
+         else
+         {
+            ChangeNextProjectionVisible(false);
+         }
       }
 
-      public object[] CheckProjectionUnit(Godot.Collections.Dictionary result, Spatial miniBall, Vector3 from)
+      public void ChangeNextProjectionVisible(bool visible)
+      {
+         projectionNext.Visible = visible;
+         projectionArrowNext.Visible = visible;
+      }
+
+      public ProjectionResultData GetProjetionResult()
+      {
+         ProjectionResultData resultData = new ProjectionResultData();
+         resultData.minDist = Mathf.Inf;
+         resultData.minPosCollided = Vector3.Zero;
+         resultData.minNormal = Vector3.Zero;
+         resultData.objCenter = Vector3.Zero;
+         resultData.curTargetProj = null;
+
+         foreach (RayCast ray in rays)
+         {
+            if (ray.IsColliding())
+            {
+               Vector3 position = ray.GetCollisionPoint();
+               Vector3 normal = ray.GetCollisionNormal();
+               Spatial node = (Spatial)ray.GetCollider();
+               float distance = ray.GlobalTranslation.DistanceTo(position);
+
+               if (resultData.minDist > distance)
+               {
+                  resultData.minPosCollided = position;
+                  resultData.minDist = distance;
+                  resultData.minNormal = normal;
+                  resultData.objCenter = ((Spatial)node).GlobalTranslation;
+                  resultData.curTargetProj = node;
+               }
+            }
+         }
+
+         return resultData;
+      }
+
+      public ProjectionResultData GetManualProjetionResult()
+      {
+         Vector3 whiteBallPos = whiteBall.GlobalTransform.origin;
+         PhysicsDirectSpaceState spaceState = GetWorld().DirectSpaceState;
+         Vector3 forward = GlobalTransform.basis.z.Normalized();
+         Vector3 forwardRay = (forward * 1000);
+
+         Vector3 fromTop = whiteBallPos + new Vector3(-ballRadius / 2, 0, 0);
+         Vector3 toTop = forwardRay + new Vector3(0, ballRadius, 0);
+         var resultTop = spaceState.IntersectRay(fromTop, toTop, null, projectionMask);
+         var posTop = ManualProjectionRay(resultTop, debugBallTop, fromTop);
+
+         Vector3 fromBottom = whiteBallPos + new Vector3(ballRadius / 2, 0, 0);
+         Vector3 toBottom = forwardRay + new Vector3(0, -ballRadius, 0);
+         var resultBottom = spaceState.IntersectRay(fromBottom, toBottom, null, projectionMask);
+         var posBottom = ManualProjectionRay(resultBottom, debugBallBottom, fromBottom);
+
+         Vector3 fromRight = whiteBallPos + new Vector3(-ballRadius, 0, 0);
+         Vector3 toRight = forwardRay + new Vector3(-ballRadius, 0, 0);
+         var resultRight = spaceState.IntersectRay(fromRight, toRight, null, projectionMask);
+         var posRight = ManualProjectionRay(resultRight, debugBallRight, fromRight);
+
+         Vector3 fromLeft = whiteBallPos + new Vector3(ballRadius, 0, 0);
+         Vector3 toLeft = forwardRay + new Vector3(ballRadius, 0, 0);
+         var resultLeft = spaceState.IntersectRay(fromLeft, toLeft, null, projectionMask);
+         var posLeft = ManualProjectionRay(resultLeft, debugBallLeft, fromLeft);
+
+         Vector3 fromMiddle = whiteBallPos;
+         Vector3 toMiddle = forwardRay;
+         var resultMiddle = spaceState.IntersectRay(fromMiddle, toMiddle, null, projectionMask);
+         var posMiddle = ManualProjectionRay(resultMiddle, debugBallMiddle, fromMiddle);
+
+         ProjectionResultData resultData = new ProjectionResultData();
+         resultData.minDist = Mathf.Inf;
+         resultData.minPosCollided = Vector3.Zero;
+         resultData.minNormal = Vector3.Zero;
+         resultData.objCenter = Vector3.Zero;
+         resultData.curTargetProj = null;
+
+         if (posTop != null)
+         {
+            var posT = (Vector3)posTop[0];
+            float distT = posT.DistanceTo(whiteBallPos);
+            if (resultData.minDist > distT)
+            {
+               resultData.minPosCollided = posT;
+               resultData.minDist = distT;
+               resultData.minNormal = (Vector3)posTop[1];
+               resultData.objCenter = (Vector3)posTop[2];
+               resultData.curTargetProj = (Node)posTop[3];
+            }
+         }
+         if (posBottom != null)
+         {
+            var posB = (Vector3)posBottom[0];
+            float distB = posB.DistanceTo(whiteBallPos);
+            if (resultData.minDist > distB)
+            {
+               resultData.minPosCollided = posB;
+               resultData.minDist = distB;
+               resultData.minNormal = (Vector3)posBottom[1];
+               resultData.objCenter = (Vector3)posBottom[2];
+               resultData.curTargetProj = (Node)posBottom[3];
+            }
+         }
+         if (posRight != null)
+         {
+            var posR = (Vector3)posRight[0];
+            float distR = posR.DistanceTo(whiteBallPos);
+            if (resultData.minDist > distR)
+            {
+               resultData.minPosCollided = posR;
+               resultData.minDist = distR;
+               resultData.minNormal = (Vector3)posRight[1];
+               resultData.objCenter = (Vector3)posRight[2];
+               resultData.curTargetProj = (Node)posRight[3];
+            }
+         }
+         if (posLeft != null)
+         {
+            var posL = (Vector3)posLeft[0];
+            float distL = posL.DistanceTo(whiteBallPos);
+            if (resultData.minDist > distL)
+            {
+               resultData.minPosCollided = posL;
+               resultData.minDist = distL;
+               resultData.minNormal = (Vector3)posLeft[1];
+               resultData.objCenter = (Vector3)posLeft[2];
+               resultData.curTargetProj = (Node)posLeft[3];
+            }
+         }
+         if (posMiddle != null)
+         {
+            var posM = (Vector3)posMiddle[0];
+            float distM = posM.DistanceTo(whiteBallPos);
+            if (resultData.minDist > distM)
+            {
+               resultData.minPosCollided = posM;
+               resultData.minDist = distM;
+               resultData.minNormal = (Vector3)posMiddle[1];
+               resultData.objCenter = (Vector3)posMiddle[2];
+               resultData.curTargetProj = (Node)posMiddle[3];
+            }
+         }
+
+         return resultData;
+      }
+
+      public object[] ManualProjectionRay(Godot.Collections.Dictionary result, Spatial miniBall, Vector3 from)
       {
          bool hasCollision = result != null && result.Contains("collider");
          miniBall.Visible = hasCollision;
@@ -496,7 +599,7 @@ namespace CrazySnooker.Game.Controllers
          if (canShot)
          {
             var distanceAvg = DistanceFromInitial((Vector3)shotPos);
-            whiteBall.AddForce(GlobalTransform.basis.z.Normalized() * (maxForce * distanceAvg) * 60, new Vector3(0, 0, 0));
+            whiteBall.AddForce(GlobalTransform.basis.z.Normalized() * (maxForce * distanceAvg) * 60, new Vector3(0, .05f, 0));
             audioManager.Play("cue_in_whiteball", null, whiteBall.GlobalTranslation);
             canShot = false;
             shotPos = null;
@@ -506,8 +609,8 @@ namespace CrazySnooker.Game.Controllers
 
       public async void WaitingFinishTurn()
       {
-         isYourTurn = false;
-         await ToSignal(GetTree().CreateTimer(timeToFinishTurn), "timeout");
+         isYourTurn = false; // TODO: definido pelo timer de turn apenas
+         await ToSignal(GetTree().CreateTimer(waitingTimeToFinishTurn), "timeout");
          waitingFinishTurn = true;
       }
    }

@@ -183,10 +183,12 @@ shadow_atlas_quad_1 = 3
 shadow_atlas_quad_2 = 4
 shadow_atlas_quad_3 = 5
 script = ExtResource( 17 )
-scaleFactor = 0.65
 
 [node name="GameScene" parent="ViewportContainer/Viewport" instance=ExtResource( 1 )]
 unique_name_in_owner = true
+
+[node name="BoneAttachment" parent="ViewportContainer/Viewport/GameScene/FristCreature/first_creature/Armature/Skeleton" index="1"]
+transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933072, -0.953768, -0.201927, -0.222603, -0.205026, -0.378468, 0.52973 )
 
 [node name="CaloriesBar3D" parent="ViewportContainer/Viewport/GameScene/FristCreature" index="4"]
 material_override = SubResource( 10 )

@@ -64,13 +64,13 @@ namespace CrazySnooker.Game.Entities.Balls
 
             audioManager.Play("ball_in_ball", null, ball.GlobalTranslation);
 
-            if (gameManager.PredictionVec == Vector3.Zero) return;
+            // if (gameManager.PredictionVec == Vector3.Zero) return;
 
-            Vector3 dir = gameManager.PredictionVec.Normalized();
-            ball.AddForce(dir * hitForce * 40, Vector3.Zero);
-            AddForce(dir * hitForce * -60, Vector3.Zero);
+            // Vector3 dir = gameManager.PredictionVec.Normalized();
+            // ball.AddForce(dir * hitForce * 40, Vector3.Zero);
+            // AddForce(dir * hitForce * -60, Vector3.Zero);
 
-            gameManager.PredictionVec = Vector3.Zero;
+            // gameManager.PredictionVec = Vector3.Zero;
          }
       }
 

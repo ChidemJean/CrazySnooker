@@ -25,7 +25,7 @@ namespace CrazySnooker.Game.Entities.Balls
          base._IntegrateForces(state);
          if (gameManager.playerYou.playerID == gameManager.playerTurnId)
          {
-            if (shouldReset)
+            if (shouldReset && state.Transform.origin.y < -1f)
             {
                state.LinearVelocity = Vector3.Zero;
                state.AngularVelocity = Vector3.Zero;

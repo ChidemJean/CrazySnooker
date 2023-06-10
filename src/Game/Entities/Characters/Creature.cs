@@ -74,7 +74,9 @@ namespace CrazySnooker.Game.Entities.Characters
          }
          if (node is FoodBall)
          {
-            Eat((FoodBall)node);
+            FoodBall foodBall = (FoodBall) node;
+            Eat(foodBall);
+            gameManager.AddPocketedBall(foodBall);
          }
       }
 

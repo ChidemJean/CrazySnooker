@@ -23,6 +23,7 @@ shape = SubResource( 4 )
 
 [node name="CollisionShape2" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.98831, 0 )
+visible = false
 shape = SubResource( 3 )
 
 [node name="table_custom" parent="." instance=ExtResource( 1 )]

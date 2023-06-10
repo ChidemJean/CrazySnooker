@@ -70,6 +70,8 @@ namespace CrazySnooker.Game.Managers
 
       public Dictionary<BallCategory, int> categoriesQtd = new Dictionary<BallCategory, int>();
 
+      public List<BallCategory> pocketedBalls = new List<BallCategory>();
+
       public override void _Ready()
       {
          network = GetNode<INetwork>("%Network");
@@ -95,6 +97,27 @@ namespace CrazySnooker.Game.Managers
          }
       }
 
+      public void AddPocketedBall(GenericBall ball)
+      {
+         if (playerTurnId == playerYou.playerID) {
+            pocketedBalls.Add(ball.category);
+         }
+      }
+
+      public bool IsNextTurnMy()
+      {
+         if (pocketedBalls.Count > 0 && pocketedBalls[0] == yourBallCategory) {
+            return true;
+         }
+
+         return false;
+      }
+
+      public void ClearPocketedBalls()
+      {
+         pocketedBalls.Clear();
+      }
+
       public void InitFirstTurn()
       {
          if (isHosting)
@@ -105,6 +128,8 @@ namespace CrazySnooker.Game.Managers
 
       public void SendUpdateTurn()
       {
+         ClearPocketedBalls();
+         //
          int idTurn = playerOpponent.playerID;
          playerTurnId = idTurn;
          network.SendUpdateTurn(idTurn);
