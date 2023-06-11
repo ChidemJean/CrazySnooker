@@ -7,6 +7,7 @@ using CrazySnooker.Game.Managers;
 using CrazySnooker.Global;
 using CrazySnooker.Utils;
 using CrazySnooker.Game.Network;
+using CrazySnooker.Events;
 using CrazySnooker.Game.Network.Messages;
 
 namespace CrazySnooker.Game.Controllers
@@ -64,7 +65,7 @@ namespace CrazySnooker.Game.Controllers
 
       private float moveFactor = .1f;
 
-      private bool canShot = false;
+      public bool canShot = false;
 
       private Spatial projection;
       private Spatial projectionNext;
@@ -101,9 +102,12 @@ namespace CrazySnooker.Game.Controllers
 
       private List<RayCast> rays = new List<RayCast>();
 
+      private GlobalEvents globalEvents;
+
       public override void _Ready()
       {
          gameManager = GetNode<GameManager>("%GameManager");
+         globalEvents = GetNode<GlobalEvents>("/root/GlobalEvents");
          network = GetNode<INetwork>("%Network");
          audioManager = GetNode<AudioManager>("/root/MainScene/AudioManager");
          mainScene = GetNode<MainScene>("/root/MainScene");
@@ -130,7 +134,11 @@ namespace CrazySnooker.Game.Controllers
          {
             if (node is RayCast)
             {
-               rays.Add((RayCast)node);
+               if (!isRemote) {
+                  rays.Add((RayCast)node);
+               } else {
+                  ((RayCast)node).Enabled = false;
+               }
             }
          }
 
@@ -302,6 +310,7 @@ namespace CrazySnooker.Game.Controllers
          if (directionFromInitial.x <= 0 && distanceFromInitial <= maxDistance)
          {
             areaDetector.Translation = moveValue;
+            globalEvents.EmitSignal(GameEvent.CueForceChange, distanceFromInitial / maxDistance);
          }
       }
 
@@ -599,6 +608,7 @@ namespace CrazySnooker.Game.Controllers
          if (canShot)
          {
             var distanceAvg = DistanceFromInitial((Vector3)shotPos);
+            globalEvents.EmitSignal(GameEvent.CueForceChange, distanceAvg / maxDistance);
             whiteBall.AddForce(GlobalTransform.basis.z.Normalized() * (maxForce * distanceAvg) * 60, new Vector3(0, .05f, 0));
             audioManager.Play("cue_in_whiteball", null, whiteBall.GlobalTranslation);
             canShot = false;

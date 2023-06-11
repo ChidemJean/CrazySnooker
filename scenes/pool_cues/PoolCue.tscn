@@ -61,7 +61,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.00789 )
 shape = SubResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( -1, 1.22935e-07, -1.36904e-07, 1.86265e-09, 0.991558, 0.129661, 1.51239e-07, 0.129661, -0.991558, -0.00968136, 0.957695, -4.26277 )
+transform = Transform( -1, 1.22935e-07, -1.36904e-07, 1.86265e-09, 0.991558, 0.129661, 1.51239e-07, 0.129661, -0.991558, 0, 0.958, -4.263 )
 environment = ExtResource( 3 )
 fov = 56.0
 size = 6.0

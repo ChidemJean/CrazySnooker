@@ -14,7 +14,7 @@ namespace CrazySnooker.Game.Entities.Balls
       [Export]
       private NodePath meshPath;
 
-      private MeshInstance mesh;
+      protected MeshInstance mesh;
 
       private Vector3 currentVelocity = Vector3.Zero;
       private Vector3 previousVelocity = Vector3.Zero;
@@ -45,7 +45,7 @@ namespace CrazySnooker.Game.Entities.Balls
          Connect("body_entered", this, nameof(OnBallEntered));
       }
 
-      public void OnBallEntered(Node node)
+      public virtual void OnBallEntered(Node node)
       {
          if (node is TableWall)
          {

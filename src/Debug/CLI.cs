@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using CrazySnooker.Game.Managers;
+using CrazySnooker.Events;
 
 namespace CrazySnooker.Debug
 {
@@ -20,6 +21,7 @@ namespace CrazySnooker.Debug
         private string initialCmdText;
         private List<string> history = new List<string>();
         private int selectedHistoryKey = 0;
+        private GlobalEvents globalEvents;
 
         public Dictionary<string, string> cmds = new Dictionary<string, string> 
         { 
@@ -28,11 +30,13 @@ namespace CrazySnooker.Debug
             {"help", "help - Lista os comandos disponíveis"},
             {"clr_hist", "clr_hist - Limpa o histórico de comandos"},
             {"list_hist", "list_hist - Lista o histórico de comandos"},
+            {"crs", "crs [value: 1 - 10] - Altera o render size"},
             {"inv", "inv - Solicita operação no inventário"},
         };
         
         public override void _Ready()
         {
+            globalEvents = GetNode<GlobalEvents>("/root/GlobalEvents");
             cmdLabel = GetNode<Label>(cmdLabelPath);
             input = GetNode<LineEdit>(inputPath);
             close = GetNode<Control>(closePath);
@@ -129,9 +133,10 @@ namespace CrazySnooker.Debug
                         cmdLabel.Text += histStr;
                         break;
 
-                    case "inv":
-                        string entityKey = cmdParams[0];
-                        int qtd = cmdParams[1].ToInt();
+                    case "crs":
+                        float size = cmdParams[0].ToFloat() / 10f;
+                        GD.Print(size);
+                        globalEvents.EmitSignal(GameEvent.ChangeRenderSize, size);
                         Close();
                         break;
                 }

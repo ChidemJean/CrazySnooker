@@ -7,6 +7,7 @@ using CrazySnooker.Game.Network;
 using CrazySnooker.Utils;
 using CrazySnooker.Game.Network.Messages;
 using CrazySnooker.Game.Particles;
+using CrazySnooker.Game.Entities.Characters;
 
 namespace CrazySnooker.Game.Managers
 {
@@ -82,6 +83,7 @@ namespace CrazySnooker.Game.Managers
 
 			categoriesQtd.Add(BallCategory.HEALTHY, 0);
 			categoriesQtd.Add(BallCategory.NOT_HEALTHY, 0);
+			categoriesQtd.Add(BallCategory.BLACK_BALL, 0);
 
          if (ballsGroup != null)
          {
@@ -187,23 +189,28 @@ namespace CrazySnooker.Game.Managers
             orientation = MathUtils.Vector3ToFloatArray(whiteBall.GlobalTransform.basis.GetEuler()),
             scnIdx = 0,
          };
-         BallState[] _ballStates = new BallState[balls.Count + 1];
-         _ballStates[0] = whiteBallState;
+         List<BallState> _ballStates = new List<BallState>();
+         _ballStates.Add(whiteBallState);
          for (int i = 0; i < balls.Count; i++)
          {
             GenericBall ball = balls[i];
-            _ballStates[i + 1] = new BallState()
+            
+            if (!IsInstanceValid(ball)) continue;
+            if (ball.LinearVelocity.Length() == 0) continue;
+
+            _ballStates.Add(new BallState()
             {
                angularVelocity = MathUtils.Vector3ToFloatArray(ball.AngularVelocity),
                linearVelocity = MathUtils.Vector3ToFloatArray(ball.LinearVelocity),
                position = MathUtils.Vector3ToFloatArray(ball.GlobalTransform.origin),
                orientation = MathUtils.Vector3ToFloatArray(ball.GlobalTransform.basis.GetEuler()),
                scnIdx = ball.id,
-            };
+            });
          }
+
          UpdatePackage updatePackage = new UpdatePackage()
          {
-            ballStates = _ballStates
+            ballStates = _ballStates.ToArray()
          };
          network.SendBallsState(updatePackage);
       }
@@ -220,6 +227,16 @@ namespace CrazySnooker.Game.Managers
          return BallCategory.UNDEFINED;
       }
 
+      public void CreatureDied(Creature creature)
+      {
+         if (playerTurnId == playerYou.playerID) {
+            Loser();
+         }
+         if (playerTurnId == playerOpponent.playerID) {
+            Winner();
+         }
+      }
+
       public void OnTreeExitingBall(Node node)
       {
          GenericBall ball = (GenericBall)node;
@@ -232,6 +249,10 @@ namespace CrazySnooker.Game.Managers
 			if (categoriesQtd[category] > 0) {
          	categoriesQtd[category]--;
 			}
+
+         if (category != BallCategory.HEALTHY && category != BallCategory.NOT_HEALTHY) {
+            return;
+         }
 
          bool isYourTurn = playerYou.playerID == playerTurnId;
 
@@ -297,7 +318,7 @@ namespace CrazySnooker.Game.Managers
          for (int i = 0; i < balls.Count; i++)
          {
             GenericBall ball = balls[i];
-            if (ball.LinearVelocity.Length() >= .02f)
+            if (IsInstanceValid(ball) && ball.LinearVelocity.Length() >= .02f)
             {
                return true;
             }

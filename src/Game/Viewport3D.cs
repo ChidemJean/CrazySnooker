@@ -24,6 +24,7 @@ namespace CrazySnooker.Game
          Connect("size_changed", this, nameof(OnResize));
          await ToSignal(GetTree().CreateTimer(.75f), "timeout");
 			UpdateViewport3DSize(scaleFactor);
+         globalEvents.Connect(GameEvent.ChangeRenderSize, this, nameof(UpdateViewport3DSize));
       }
 
       public void OnResize()
@@ -32,7 +33,7 @@ namespace CrazySnooker.Game
          UpdateViewport3DSize(this.currentScale);
       }
 
-      public void UpdateViewport3DSize(float value, string type = "LOAD")
+      public void UpdateViewport3DSize(float value)
       {
 
          float scaleFactorClamped = Mathf.Clamp(value, 0.2f, 1f);

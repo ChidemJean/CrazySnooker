@@ -8,11 +8,21 @@ namespace CrazySnooker.Game.Entities.Traps
         [Export]
         public float speed = 3f;
 
+        [Export]
+        private NodePath spinningNodePath;
+
+        private Spatial spinningNode;
+
+        public override void _Ready()
+        {
+            spinningNode = GetNode<Spatial>(spinningNodePath);
+        }
+
         public override void _PhysicsProcess(float delta)
         {
-            Vector3 rot = GlobalRotation;
+            Vector3 rot = spinningNode.Rotation;
             rot.y += delta * speed;
-            GlobalRotation = rot;
+            spinningNode.Rotation = rot;
         }
 
     }

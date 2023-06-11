@@ -77,6 +77,13 @@ namespace CrazySnooker.Game.Entities.Characters
             FoodBall foodBall = (FoodBall) node;
             Eat(foodBall);
             gameManager.AddPocketedBall(foodBall);
+            return;
+         }
+         if (node is BombBall)
+         {
+            BombBall bombBall = (BombBall) node;
+            bombBall.QueueFree();
+            Die();
          }
       }
 
@@ -132,6 +139,7 @@ namespace CrazySnooker.Game.Entities.Characters
          var tween = GetTree().CreateTween();
          tween.TweenProperty(animationTree, "parameters/Hit/blend_amount", 1, .08f);
          MakeExplosion();
+         gameManager.CreatureDied(this);
          await ToSignal(tween, "finished");
          QueueFree();
       }

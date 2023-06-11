@@ -13,6 +13,7 @@ extents = Vector3( 0.351225, 0.0322158, 0.0626894 )
 collision_mask = 24
 mode = 3
 script = ExtResource( 2 )
+spinningNodePath = NodePath("spining_trap/Cube001")
 
 [node name="spining_trap" parent="." instance=ExtResource( 1 )]
 transform = Transform( 0.05, 0, 0, 0, 0.05, 0, 0, 0, 0.05, 0, 0, 0 )
@@ -28,3 +29,5 @@ shape = SubResource( 2 )
 [node name="CollisionShape3" type="CollisionShape" parent="."]
 transform = Transform( -0.00176279, 0, -0.999998, 0, 1, 0, 0.999998, 0, -0.00176279, 0, 0.208063, 0 )
 shape = SubResource( 2 )
+
+[editable path="spining_trap"]

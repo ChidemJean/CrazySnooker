@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=27 format=2]
 
 [ext_resource path="res://default_env.tres" type="Environment" id=1]
 [ext_resource path="res://scenes/balls/Morango.tscn" type="PackedScene" id=2]
@@ -19,6 +19,7 @@
 [ext_resource path="res://scenes/characters/FirstCreature.tscn" type="PackedScene" id=17]
 [ext_resource path="res://scenes/particles/ExplosionParticles.tscn" type="PackedScene" id=18]
 [ext_resource path="res://assets/fonts/baloom_big.tres" type="DynamicFont" id=19]
+[ext_resource path="res://scenes/balls/Bomb.tscn" type="PackedScene" id=20]
 
 [sub_resource type="CylinderMesh" id=8]
 top_radius = 0.01
@@ -238,10 +239,6 @@ id = 14
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.260651, 2.15841, 5.6198 )
 id = 15
 
-[node name="Hamburguer13" parent="BallsGroup" instance=ExtResource( 4 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.150331, 2.15841, 5.81686 )
-id = 16
-
 [node name="Morango4" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0849144, 2.15231, 5.0148 )
 id = 17
@@ -261,6 +258,10 @@ id = 20
 [node name="Morango8" parent="BallsGroup" instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.685329, 2.15231, 4.83064 )
 id = 21
+
+[node name="Bomb" parent="BallsGroup" instance=ExtResource( 20 )]
+transform = Transform( -0.0513076, 0, -0.998683, 0, 1, 0, 0.998683, 0, -0.0513076, 0.131567, 2.1491, 5.83251 )
+id = 16
 
 [node name="ProjectionGroup" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.989856, 0 )
@@ -333,8 +334,11 @@ speed = 7.0
 [node name="FristCreature" parent="." instance=ExtResource( 17 )]
 transform = Transform( 0.74416, 0, 0.668001, 0, 1, 0, -0.668001, 0, 0.74416, 4.17757, 1.88278, 15.1959 )
 
+[node name="Skeleton" parent="FristCreature/first_creature/Armature" index="0"]
+bones/4/bound_children = [  ]
+
 [node name="BoneAttachment" parent="FristCreature/first_creature/Armature/Skeleton" index="1"]
-transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933072, -0.953768, -0.201927, -0.222603, -0.205026, -0.378468, 0.52973 )
+transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933071, -0.953768, -0.201927, -0.222603, -0.205026, -0.414909, 0.52973 )
 
 [node name="CaloriesBar3D" parent="FristCreature" index="4"]
 material_override = SubResource( 11 )

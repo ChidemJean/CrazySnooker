@@ -74,7 +74,7 @@ nodes/PrepareEatAnim/position = Vector2( -540, 100 )
 nodes/PrepareEatScale/node = SubResource( 10 )
 nodes/PrepareEatScale/position = Vector2( -360, 100 )
 nodes/output/position = Vector2( 1140, 20 )
-node_connections = [ "PrepareEat", 0, "IdleBreathScale", "PrepareEat", 1, "PrepareEatScale", "Hit", 0, "PrepareEat", "Hit", 1, "HitAnim", "Eat", 0, "HitShot", "Eat", 1, "EatAnim", "Fatten", 0, "Hit", "Fatten", 1, "FattenAnim", "IdleBreathScale", 0, "IdleBreath", "HitShot", 0, "Fatten", "HitShot", 1, "HitShotAnim", "PrepareEatScale", 0, "PrepareEatAnim", "output", 0, "Eat" ]
+node_connections = [ "Hit", 0, "PrepareEat", "Hit", 1, "HitAnim", "Eat", 0, "HitShot", "Eat", 1, "EatAnim", "PrepareEat", 0, "IdleBreathScale", "PrepareEat", 1, "PrepareEatScale", "IdleBreathScale", 0, "IdleBreath", "Fatten", 0, "Hit", "Fatten", 1, "FattenAnim", "HitShot", 0, "Fatten", "HitShot", 1, "HitShotAnim", "PrepareEatScale", 0, "PrepareEatAnim", "output", 0, "Eat" ]
 
 [sub_resource type="BoxShape" id=8]
 extents = Vector3( 0.677465, 0.389995, 0.290348 )
@@ -116,12 +116,15 @@ shape = SubResource( 25 )
 [node name="first_creature" parent="." instance=ExtResource( 1 )]
 transform = Transform( 0.02, 0, 0, 0, 0.02, 0, 0, 0, 0.02, -0.150565, 1.43464, 0 )
 
+[node name="Skeleton" parent="first_creature/Armature" index="0"]
+bones/4/bound_children = [ NodePath("BoneAttachment") ]
+
 [node name="body" parent="first_creature/Armature/Skeleton" index="0"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.35266, 0 )
 layers = 4
 
 [node name="BoneAttachment" type="BoneAttachment" parent="first_creature/Armature/Skeleton" index="1"]
-transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933072, -0.953768, -0.201927, -0.222603, -0.205026, -0.430513, 0.52973 )
+transform = Transform( 0.261348, -0.922969, -0.282533, -0.148405, -0.327648, 0.933071, -0.953768, -0.201927, -0.222603, -0.205026, -0.377816, 0.52973 )
 visible = false
 bone_name = "ombro.L"
 
